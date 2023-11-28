@@ -3,13 +3,14 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppBar,ListItemIcon,ListItemText, Toolbar, Typography, Box, List, ListItem,TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Paper, IconButton } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
-
+import {TopBar, ActionList, Icon, Frame, Text} from '@shopify/polaris';
+import {ArrowLeftMinor, QuestionMarkMajor} from '@shopify/polaris-icons';
 import './App.css'; // Make sure to include the CSS file for additional styling
 import { Card, CardMedia, CardContent, CardActions } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SwipeableViews from 'react-swipeable-views';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'; // Import a default icon
-
+import  {HomeMinor, ProductsMinor} from '@shopify/polaris-icons';
 import AddIcon from '@mui/icons-material/Add';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -65,55 +66,7 @@ const itemTypes = {
     // ... other types
 };
 
-// Product card component
-const ProductCard = ({ product }) => {
-    return (
-        <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-                component="img"
-                height="140"
-                image={product.imgPath}
-                alt={product.label}
-            />
-            <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                    {product.label}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    {product.description}
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-            </CardActions>
-        </Card>
-    );
-};
 
-// Image carousel component using SwipeableViews
-const ImageCarousel = ({ items }) => {
-    const theme = useTheme();
-
-    return (
-        <SwipeableViews enableMouseEvents>
-            {items.map((item, index) => (
-                <Box key={index} sx={{ width: '100%', flexGrow: 1 }}>
-                    <Typography>{item.label}</Typography>
-                    <img src={item.imgPath} alt={item.label} style={{ width: '100%' }} />
-                </Box>
-            ))}
-        </SwipeableViews>
-    );
-};
-
-// Mock components for each item type
-const itemComponents = {
-    [itemTypes.IMAGE]: () => <div className="preview-item image">Image Component</div>,
-    [itemTypes.CAROUSEL]: () => <div className="preview-item carousel">Carousel Component</div>,
-    [itemTypes.PRODUCTS]: () => <div className="preview-item products">Products Block</div>,
-    [itemTypes.COLLECTIONS]: () => <div className="preview-item collections">Collections Block</div>,
-};
 
 const itemIcons = {
     divider: HorizontalRuleIcon,
@@ -202,6 +155,85 @@ const ItemSettingsPanel = ({ selectedItem, closePanel, updateItem }) => {
 
 
 function App() {
+    // ...
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isSecondaryMenuOpen, setIsSecondaryMenuOpen] = useState(false);
+
+    const toggleIsUserMenuOpen = useCallback(
+        () => setIsUserMenuOpen((isUserMenuOpen) => !isUserMenuOpen),
+        [],
+    );
+
+    const toggleIsSecondaryMenuOpen = useCallback(
+        () => setIsSecondaryMenuOpen((isSecondaryMenuOpen) => !isSecondaryMenuOpen),
+        [],
+    );
+
+
+
+    const handleNavigationToggle = useCallback(() => {
+        console.log('toggle navigation visibility');
+    }, []);
+    const userMenuMarkup = (
+        <TopBar.UserMenu
+            actions={[
+                {
+                    items: [{content: 'Home'}],
+                },
+                {
+                    items: [{content: 'Page Builder'}],
+                },
+                {
+                    items: [{content: 'Menu Builder'}],
+                },
+                // ... Add more sections here
+            ]}
+            name="Mobile App builder"
+            detail="Click here for main menu"
+            initials="Menu"
+            open={isUserMenuOpen}
+            onToggle={toggleIsUserMenuOpen}
+        />
+    );
+
+    const secondaryMenuMarkup = (
+        <TopBar.Menu
+            activatorContent={
+                <span>
+        <Icon source={QuestionMarkMajor} />
+        <Text as="span" visuallyHidden>
+          Secondary menu
+        </Text>
+      </span>
+            }
+            open={isSecondaryMenuOpen}
+            onOpen={toggleIsSecondaryMenuOpen}
+            onClose={toggleIsSecondaryMenuOpen}
+            actions={[
+                {
+                    items: [{content: 'Notification'}],
+                },
+                {
+                    items: [{content: 'Branding'}],
+                },
+                {
+                    items: [{content: 'Submission'}],
+                },
+                // ... Add more sections here
+            ]}
+        />
+    );
+
+// ...
+    const topBarMarkup = (
+        <TopBar
+            showNavigationToggle
+            userMenu={userMenuMarkup}
+            secondaryMenu={secondaryMenuMarkup}
+
+            onNavigationToggle={handleNavigationToggle}
+        />
+    );
     const [settingsPanelOpen, setSettingsPanelOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
@@ -313,14 +345,16 @@ function App() {
     }, [items]);
 
     return (
+        <Frame   topBar={topBarMarkup}>
+
         <DndProvider backend={HTML5Backend}>
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography variant="h6" color="inherit">
-                        Mobile App Builder
-                    </Typography>
-                </Toolbar>
-            </AppBar>
+            {/*<AppBar position="static">*/}
+            {/*    <Toolbar>*/}
+            {/*        <Typography variant="h6" color="inherit">*/}
+            {/*            Mobile App Builder*/}
+            {/*        </Typography>*/}
+            {/*    </Toolbar>*/}
+            {/*</AppBar>*/}
 
             <Box display="flex">
                 <Box width="256px" bgcolor="#f0f0f0" height="100vh">
@@ -372,6 +406,7 @@ function App() {
                 )}
             </Drawer>
         </DndProvider>
+        </Frame>
     );
 }
 

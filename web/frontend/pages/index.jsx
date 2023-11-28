@@ -27,6 +27,10 @@ export default function HomePage() {
     const handleNavigation2 = () => {
         navigate('/page_builder_sample'); // Replace '/destination-route' with your target route
     };
+
+    const handleNavigation3 = () => {
+        navigate('/page_menu_buider'); // Replace '/destination-route' with your target route
+    }
   return (
     <Page narrowWidth>
       <TitleBar title={t("HomePage.title")} primaryAction={null} />
@@ -46,6 +50,7 @@ export default function HomePage() {
                   </Text>
                     <Button onClick={handleNavigation}>Start Page builder</Button> {/* Add this line */}
                     <Button onClick={handleNavigation2}>Sample Page builder</Button> {/* Add this line */}
+                    <Button onClick={handleNavigation3}>Menu Builder</Button> {/* Add this line */}
 
                     <p>
                     <Trans
