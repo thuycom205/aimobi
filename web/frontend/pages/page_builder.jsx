@@ -2,21 +2,43 @@ import React, { useState, useCallback } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppBar,ListItemIcon,ListItemText, Toolbar, Typography, Box, List, ListItem,TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Paper, IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import Drawer from '@mui/material/Drawer';
-import SettingsIcon from '@mui/icons-material/Settings';
 
+import './App.css'; // Make sure to include the CSS file for additional styling
+import { Card, CardMedia, CardContent, CardActions } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import SwipeableViews from 'react-swipeable-views';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'; // Import a default icon
+
+import AddIcon from '@mui/icons-material/Add';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SettingsIcon from '@mui/icons-material/Settings';
 import ImageIcon from '@mui/icons-material/Image';
 import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 import CategoryIcon from '@mui/icons-material/Category';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import CloseIcon from '@mui/icons-material/Close';
 import DefaultIcon from '@mui/icons-material/HelpOutline'; // An example default icon
+import GridViewIcon from '@mui/icons-material/GridView';
+import AppsIcon from '@mui/icons-material/Apps';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import SlideshowIcon from '@mui/icons-material/Slideshow';
+import ArticleIcon from '@mui/icons-material/Article';
 
-import './App.css'; // Make sure to include the CSS file for additional styling
-import { Card, CardMedia, CardContent, CardActions } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import SwipeableViews from 'react-swipeable-views';
+import SearchIcon from '@mui/icons-material/Search';
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
+import TitleIcon from '@mui/icons-material/Title';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
+import ShortTextIcon from '@mui/icons-material/ShortText';
+import SubjectIcon from '@mui/icons-material/Subject';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import HistoryIcon from '@mui/icons-material/History';
+import RestoreIcon from '@mui/icons-material/Restore';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+
+
+import Screen from './page_builder_sample.jsx';
 const ITEM_TYPE = 'ITEM';
 const carouselItems = [
     { imgPath: 'https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/459619/item/goods_28_459619.jpg', label: 'First Image' },
@@ -25,11 +47,24 @@ const carouselItems = [
 ];
 
 const itemTypes = {
-    IMAGE: 'image',
-    CAROUSEL: 'carousel',
-    PRODUCTS: 'products',
-    COLLECTIONS: 'collections',
+    divider: 'divider',
+    title: 'title',
+    countdown: 'countdown',
+    circle_collection: 'circle_collection',
+    circle_products: 'circle_products',
+    gallery_products: 'gallery_products',
+    carousel_collection: 'carousel_collection',
+    carousel_products: 'carousel_products',
+    image: 'image',
+    video: 'video',
+    grid_product: 'grid_product',
+    grid_collection: 'grid_collection',
+    discount: 'discount',
+    loyalty: 'loyalty',
+    recent_viewed: 'recent_viewed',
+    // ... other types
 };
+
 // Product card component
 const ProductCard = ({ product }) => {
     return (
@@ -81,12 +116,25 @@ const itemComponents = {
 };
 
 const itemIcons = {
-    [itemTypes.IMAGE]: ImageIcon,
-    [itemTypes.CAROUSEL]: ViewCarouselIcon,
-    [itemTypes.PRODUCTS]: CategoryIcon,
-    [itemTypes.COLLECTIONS]: CollectionsIcon,
-};
+    divider: HorizontalRuleIcon,
+    title: TitleIcon,
+    countdown: AccessTimeIcon,
+    circle_collection: CollectionsIcon, // Example, you might want to use a different icon
+    circle_products: CategoryIcon, // Example, you might want to use a different icon
+    gallery_products: GridViewIcon,
+    carousel_collection: ViewCarouselIcon,
+    carousel_products: SlideshowIcon,
+    image: ImageIcon,
+    video: VideocamIcon,
+    grid_product: GridViewIcon,
+    grid_collection: AppsIcon,
+    discount: LocalOfferIcon,
+    loyalty: LoyaltyIcon,
+    recent_viewed: HistoryIcon,
+    default: HelpOutlineIcon, // Default key also in lowercase
 
+    // ... other types
+};
 
 const DraggableListItem = ({ id, text, index, moveListItem, onSettingsClick }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
@@ -106,9 +154,9 @@ const DraggableListItem = ({ id, text, index, moveListItem, onSettingsClick }) =
             }
         },
     }), [index, moveListItem]);
+    const Icon = itemIcons[text] || itemIcons['default']; // Use the default icon as a fallback
 
     // Use the icon corresponding to `text`, or a default icon if not found
-    const Icon = itemIcons[text] || DefaultIcon; // Make sure DefaultIcon is imported
 
     // Now the return statement is inside the function body, which is the correct place for it
     return (
@@ -193,32 +241,62 @@ function App() {
     };
 
     const renderDialogItem = (type) => {
-        const Icon = itemIcons[type];
+        // Declare Icon variable outside the if-else scope
+        let Icon;
+        console.log(type);
+
+        // Assign the appropriate icon or default to the Icon variable
+        if (itemIcons[type] === undefined) {
+            Icon = DefaultIcon;
+        } else {
+            Icon = itemIcons[type];
+        }
+
         return (
             <Grid item xs={6} key={type}>
                 <Paper
                     style={{ padding: '10px', textAlign: 'center', cursor: 'pointer' }}
                     onClick={() => handleAddNewItem(type)}
                 >
+                    {/* Use the Icon variable here */}
                     <Icon style={{ fontSize: '40px' }} />
                     <Typography>{type}</Typography>
                 </Paper>
             </Grid>
         );
     };
+
+// Example component for Countdown
+    const CountdownComponent = () => {
+        // Countdown logic goes here
+        return <Typography>Countdown Timer</Typography>;
+    };
+
+// Example component for Circle of Collections
+    const CircleCollectionComponent = () => {
+        // Circle collection logic goes here
+        return <Typography>Circle of Collections</Typography>;
+    };
+
+// ... you will need to create or define components for each of the new item types
+
+// Then in the renderPreview function, add cases for the new item types
     const renderPreview = useCallback(() => {
         return items.map((type, index) => {
             switch (type) {
-                case itemTypes.IMAGE:
-                    return <ProductCard key={index} product={{ imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/449887/item/usgoods_69_449887.jpg', label: 'Product Name', description: 'Product Description' }} />;
-                case itemTypes.CAROUSEL:
-                    return <ImageCarousel key={index} items={carouselItems} />;
-                // Add cases for other types...
+                case itemTypes.DIVIDER:
+                    return <Divider key={index} />;
+                case itemTypes.TITLE:
+                    return <Typography key={index} variant="h5">Title</Typography>;
+                case itemTypes.COUNTDOWN:
+                    return <CountdownComponent key={index} />;
+                // ... cases for other new types
                 default:
                     return <div key={index}>Unsupported item type</div>;
             }
         });
     }, [items]);
+
     return (
         <DndProvider backend={HTML5Backend}>
             <AppBar position="static">
@@ -236,7 +314,7 @@ function App() {
                             <DraggableListItem
                                 key={index}
                                 id={index}
-                                text={item.type}
+                                text={item}
                                 index={index}
                                 moveListItem={moveListItem}
                                 // Pass the setting click handler
@@ -249,17 +327,8 @@ function App() {
                         </ListItem>
                     </List>
                 </Box>
-                <Box width="315px" flexGrow={1} className="phone-preview">
-                    {renderPreview()}
-
-                    <Box className="tab-bar">
-                        {/* Simulated tab bar items */}
-                        <Typography variant="body2">Tab 1</Typography>
-                        <Typography variant="body2">Tab 2</Typography>
-                        <Typography variant="body2">Tab 3</Typography>
-                    </Box>
-                    {/* Render your components here based on the items */}
-                </Box>
+                {/* Use the Screen component */}
+                <Screen />
             </Box>
 
             <Dialog open={dialogOpen} onClose={handleDialogToggle} maxWidth="md">

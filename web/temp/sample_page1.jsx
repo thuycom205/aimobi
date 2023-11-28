@@ -1,72 +1,98 @@
-// ... other imports ...
+// Additional imports for new icons
+import DividerIcon from '@mui/icons-material/Divider';
+// ... other icons are already imported above
 
-export default function Screen() {
-    // ... useState and useEffect setup ...
+// Update itemTypes to include new types
+const itemTypes = {
+    DIVIDER: 'divider',
+    TITLE: 'title',
+    COUNTDOWN: 'countdown',
+    CIRCLE_COLLECTION: 'circle_collection',
+    CIRCLE_PRODUCTS: 'circle_products',
+    GALLERY_PRODUCTS: 'gallery_products',
+    CAROUSEL_COLLECTION: 'carousel_collection',
+    CAROUSEL_PRODUCTS: 'carousel_products',
+    IMAGE: 'image',
+    VIDEO: 'video',
+    GRID_PRODUCT: 'grid_product',
+    GRID_COLLECTION: 'grid_collection',
+    DISCOUNT: 'discount',
+    LOYALTY: 'loyalty',
+    RECENT_VIEWED: 'recent_viewed',
+    // ... other types
+};
 
-    // This function will chunk the product array into groups of three
-    const chunkedProducts = chunk(sampleProducts, 3);
+// Update itemIcons to include icons for new types
+const itemIcons = {
+    DIVIDER: DividerIcon,
+    TITLE: TitleIcon,
+    COUNTDOWN: AccessTimeIcon,
+    CIRCLE_COLLECTION: CollectionsIcon, // Example, you might want to use a different icon
+    CIRCLE_PRODUCTS: CategoryIcon, // Example, you might want to use a different icon
+    GALLERY_PRODUCTS: GridViewIcon,
+    CAROUSEL_COLLECTION: ViewCarouselIcon,
+    CAROUSEL_PRODUCTS: SlideshowIcon,
+    IMAGE: ImageIcon,
+    VIDEO: VideocamIcon,
+    GRID_PRODUCT: GridViewIcon,
+    GRID_COLLECTION: AppsIcon,
+    DISCOUNT: LocalOfferIcon,
+    LOYALTY: LoyaltyIcon,
+    RECENT_VIEWED: HistoryIcon,
+    // ... other types
+};
 
-    function chunk(arr, size) {
-        return Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
-            arr.slice(i * size, i * size + size)
-        );
-    }
+// Example component for Countdown
+const CountdownComponent = () => {
+    // Countdown logic goes here
+    return <Typography>Countdown Timer</Typography>;
+};
 
-    // ... other functions ...
+// Example component for Circle of Collections
+const CircleCollectionComponent = () => {
+    // Circle collection logic goes here
+    return <Typography>Circle of Collections</Typography>;
+};
 
+// ... you will need to create or define components for each of the new item types
+
+// Then in the renderPreview function, add cases for the new item types
+const renderPreview = useCallback(() => {
+    return items.map((type, index) => {
+        switch (type) {
+            case itemTypes.DIVIDER:
+                return <Divider key={index} />;
+            case itemTypes.TITLE:
+                return <Typography key={index} variant="h5">Title</Typography>;
+            case itemTypes.COUNTDOWN:
+                return <CountdownComponent key={index} />;
+            // ... cases for other new types
+            default:
+                return <div key={index}>Unsupported item type</div>;
+        }
+    });
+}, [items]);
+
+// Now, when you call the `handleAddNewItem` function, ensure it adds the correct type
+const handleAddNewItem = (type) => {
+    setItems([...items, type]);
+    handleDialogToggle();
+};
+
+// Add the new types to your dialog item renderer as well
+const renderDialogItem = (type) => {
+    const Icon = itemIcons[type];
     return (
-        <div className="iphone-wrapper">
-            <Box className="iphone-container">
-                {/* AppBar with Logo and Search Icon */}
-                <AppBar position="static" color="default" elevation={0} className="appbar">
-                    {/* AppBar contents */}
-                </AppBar>
-                {/* Top Notch */}
-                <Box className="iphone-notch" />
-
-                {/* Screen Content */}
-                <Box className="iphone-screen">
-                    {/* Countdown Timer */}
-                    <Typography variant="h5" align="center" className="countdown-timer">
-                        Countdown: {formatTime()}
-                    </Typography>
-
-                    {/* Product Collection Title */}
-                    <Typography variant="h6" align="center" className="product-collection-title">
-                        Featured Collection
-                    </Typography>
-
-                    {/* Swipeable Views for Product Collection */}
-                    <Box className="product-collection-container">
-                        <Typography variant="h4" align="center" className="collection-title">
-                            Fall Favorites
-                        </Typography>
-                        <Box className="products-swipe-container">
-                            <SwipeableViews enableMouseEvents>
-                                {chunkedProducts.map((chunk, index) => (
-                                    <Box key={index} className="product-swipe-slide">
-                                        {chunk.map((product, index) => (
-                                            <Box key={index} className="product-item">
-                                                <img src={product.imgPath} alt={product.label} className="product-image" />
-                                                <Typography variant="body2" align="center">{product.label}</Typography>
-                                            </Box>
-                                        ))}
-                                    </Box>
-                                ))}
-                            </SwipeableViews>
-                        </Box>
-                    </Box>
-
-                    {/* Circular Images Grid, Video Player, Grid of Images */}
-                    {/* ... */}
-                </Box>
-
-                {/* Bottom Home Indicator */}
-                <Box className="iphone-home-indicator" />
-            </Box>
-
-            {/* Drawer */}
-            {/* ... */}
-        </div>
+        <Grid item xs={6} key={type}>
+            <Paper
+                style={{ padding: '10px', textAlign: 'center', cursor: 'pointer' }}
+                onClick={() => handleAddNewItem(type)}
+            >
+                <Icon style={{ fontSize: '40px' }} />
+                <Typography>{type}</Typography>
+            </Paper>
+        </Grid>
     );
-}
+};
+
+// The rest of your App component stays the same
