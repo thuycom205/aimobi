@@ -136,14 +136,16 @@ const itemIcons = {
     // ... other types
 };
 
-const DraggableListItem = ({ id, text, index, moveListItem, onSettingsClick }) => {
+const DraggableListItem = ({ item, index, moveListItem, onSettingsClick }) => {
+    // Destructure the needed properties from the item object
+    const { type, settings } = item;
     const [{ isDragging }, drag] = useDrag(() => ({
         type: ITEM_TYPE,
-        item: { id, index },
+        item: { type, index }, // Pass the type and index as part of the item
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
-    }), [id, index]);
+    }), [type, index]);
 
     const [, drop] = useDrop(() => ({
         accept: ITEM_TYPE,
@@ -154,53 +156,51 @@ const DraggableListItem = ({ id, text, index, moveListItem, onSettingsClick }) =
             }
         },
     }), [index, moveListItem]);
-    const Icon = itemIcons[text] || itemIcons['default']; // Use the default icon as a fallback
+    const Icon = itemIcons[type] || itemIcons['default'];
 
-    // Use the icon corresponding to `text`, or a default icon if not found
-
-    // Now the return statement is inside the function body, which is the correct place for it
     return (
         <ListItem
             ref={(node) => drag(drop(node))}
             style={{ opacity: isDragging ? 0.5 : 1 }}
             button
         >
-            {/* Render the icon or a default one if it's not found */}
             <ListItemIcon>
                 <Icon style={{ marginRight: '10px' }} />
             </ListItemIcon>
-            <ListItemText primary={text} />
-            <IconButton edge="end" onClick={onSettingsClick}>
+            <ListItemText primary={type} secondary={`Margin: ${settings.margin}`} />
+            <IconButton edge="end" onClick={() => onSettingsClick(item)}>
                 <SettingsIcon />
             </IconButton>
         </ListItem>
     );
 };
 
-
-
 const ItemSettingsPanel = ({ selectedItem, closePanel, updateItem }) => {
-    // Assume updateItem is a function to update the item's settings in the main state
+    // Handlers for updating the settings of the selected item
+    const handleMarginChange = (event) => {
+        updateItem(selectedItem.type, { ...selectedItem.settings, margin: event.target.value });
+    };
 
-    // Form handlers here...
     // ...
 
     return (
         <Box p={2} width="250px">
             <Typography variant="h6">Item Settings</Typography>
-            {/* Render your settings form fields here */}
             <TextField
-                label="Title"
+                label="Margin"
                 fullWidth
                 margin="normal"
-                value={selectedItem.title}
-                // onChange handler to update the title...
+                value={selectedItem.settings.margin}
+                onChange={handleMarginChange}
+                // You can add more settings fields as needed
             />
             {/* Add other settings fields as required */}
             <Button variant="contained" onClick={closePanel}>Close</Button>
         </Box>
     );
 };
+
+
 function App() {
     const [settingsPanelOpen, setSettingsPanelOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -216,9 +216,15 @@ function App() {
         setSettingsPanelOpen(false);
     };
 
-    const updateItem = (itemId, updatedFields) => {
-        // Update item logic
+    const updateItem = (itemType, updatedSettings) => {
+        setItems(items.map(item => {
+            if (item.type === itemType) {
+                return { ...item, settings: updatedSettings };
+            }
+            return item;
+        }));
     };
+
     const [dialogOpen, setDialogOpen] = useState(false);
     const [items, setItems] = useState([]);
     const [selectedItemType, setSelectedItemType] = useState('');
@@ -236,7 +242,16 @@ function App() {
     };
 
     const handleAddNewItem = (type) => {
-        setItems([...items, type]);
+        const newItem = {
+            type: type,
+            settings: {
+                // default settings for new item, can be customized
+                margin: '1px',
+                action_type: type === 'divider' ? 'none' : 'collection', // as an example
+                collection_id: type === 'divider' ? null : 1, // as an example
+            }
+        };
+        setItems([...items, newItem]);
         handleDialogToggle();
     };
 
@@ -313,11 +328,9 @@ function App() {
                         {items.map((item, index) => (
                             <DraggableListItem
                                 key={index}
-                                id={index}
-                                text={item}
+                                item={item}
                                 index={index}
                                 moveListItem={moveListItem}
-                                // Pass the setting click handler
                                 onSettingsClick={() => handleSettingsClick(item)}
                             />
                         ))}
@@ -328,7 +341,7 @@ function App() {
                     </List>
                 </Box>
                 {/* Use the Screen component */}
-                <Screen />
+                <Screen items={items} />
             </Box>
 
             <Dialog open={dialogOpen} onClose={handleDialogToggle} maxWidth="md">

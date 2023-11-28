@@ -1,5 +1,5 @@
-import React ,{ useState, useEffect }from 'react';
-import {AppBar, Toolbar, SwipeableDrawer, Box, Grid, Paper, Typography, IconButton ,Button} from '@mui/material';
+import React, {useState, useEffect} from 'react';
+import {AppBar, Toolbar, SwipeableDrawer, Box, Grid, Paper, Typography, IconButton, Button} from '@mui/material';
 import SwipeableViews from 'react-swipeable-views';
 import VideoPlayer from 'react-player';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -7,16 +7,24 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import './Screen.css'; // Make sure to create this CSS file
 import logoImage from '../assets/logo.png';
+import CountdownComponent from '../components/CountdownComponent/CountdownComponent';
+import SwipeableCircleComponent from '../components/SwipeableCircleComponent/SwipeableCircleComponent';
+import SwipeableProductsComponent from '../components/SwipeableProductsComponent/SwipeableProductsComponent';
+import ProductGridComponent from '../components/ProductGridComponent/ProductGridComponent';
+import VideoComponent from '../components/VideoComponent/VideoComponent';
 
 const sampleProducts = [
     // Add URLs to your product images here
-    { imgPath: 'https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/459619/item/goods_28_459619.jpg', label: 'Product 1' },
-    { imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2' },
-    { imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2' },
-    { imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2' },
-    { imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2' },
-    { imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2' },
-    { imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2' },
+    {
+        imgPath: 'https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/459619/item/goods_28_459619.jpg',
+        label: 'Product 1'
+    },
+    {imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2'},
+    {imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2'},
+    {imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2'},
+    {imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2'},
+    {imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2'},
+    {imgPath: 'https://image.uniqlo.com/UQ/ST3/us/imagesgoods/458807/item/usgoods_07_458807.jpg?', label: 'Product 2'},
     // Add more products as needed
 ];
 
@@ -31,7 +39,7 @@ const sampleImages = [
     // Add more images as needed
 ];
 
-export default function Screen() {
+const Screen = ({items}) => {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [countdown, setCountdown] = useState(60 * 60); // Countdown from 1 hour, for example.
 
@@ -60,121 +68,161 @@ export default function Screen() {
     const chunkedProducts = chunk(sampleProducts, 3);
 
     function chunk(arr, size) {
-        return Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+        return Array.from({length: Math.ceil(arr.length / size)}, (v, i) =>
             arr.slice(i * size, i * size + size)
         );
     }
+    const renderItems = () => {
+        if (!items || items.length === 0) {
+            // Render default content when items is empty, null, or undefined
+            return renderDefaultContent();
+        } else {
+            // Map over items and render based on the item type
+            return items.map((item, index) => {
+                switch (item.type) {
+                    case 'countdown':
+                        return <CountdownComponent key={index} settings={item.settings} />;
+                    case 'circle_collection':
+                    case 'circle_products':
+                        return <SwipeableCircleComponent key={index} items={item.settings} />;
+                    case 'gallery_products':
+                    case 'carousel_collection':
+                        return <SwipeableProductsComponent key={index} products={item.settings} />;
 
+                    case 'grid_product':
+                    case 'grid_collection':
+                        return <ProductGridComponent key={index} products={item.settings} />;
+                    // Add more cases for other item types
+                    // Add more cases for other item types
+                        case 'video':
+                        return <VideoComponent key={index} products={item.settings} />;
+                    // Add more cases for other item types
+                    default:
+                        return <div key={index}>Unsupported item type</div>;
+                }
+            });
+        }
+    };
+    const renderDefaultContent = () => {
+        // Define your default content render logic here
+        return (
+            <Box>
 
-    return (
-        <div className="iphone-wrapper">
+                <Typography variant="h5" align="center" className="countdown-timer">
+                    Countdown: {formatTime()}
+                </Typography>
+                {/* Product Collection Title */}
+                <Typography variant="h6" align="center" className="product-collection-title">
+                    Featured Collection
+                </Typography>
 
-        <Box className="iphone-container">
-            {/* AppBar with Logo and Search Icon */}
-            <AppBar position="static" color="default" elevation={0} className="appbar">
-                <Toolbar>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        onClick={toggleDrawer(true)}
-                        className="menu-button"
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" className="app-logo">
-                        <img src={logoImage} alt="App Logo" className="logo-image" />
-                    </Typography>
-                    <IconButton
-                        edge="end"
-                        color="inherit"
-                        aria-label="search"
-                        onClick={handleSearchClick}
-                        className="search-button"
-                    >
-                        <SearchIcon />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
-            {/* Top Notch */}
-            <Box className="iphone-notch" />
-
-            {/* Screen Content */}
-            <Box className="iphone-screen">
-        <Box >
-
-            <Typography variant="h5" align="center" className="countdown-timer">
-                Countdown: {formatTime()}
-            </Typography>
-            {/* Product Collection Title */}
-            <Typography variant="h6" align="center" className="product-collection-title">
-                Featured Collection
-            </Typography>
-
-            {/* Circular Images Grid */}
-            {/* Swipeable Views for Circular Images */}
-            <SwipeableViews enableMouseEvents slideStyle={{ display: 'flex' }}>
-                <div className="swipe-view-container">
-                    {sampleImages.slice(0, 3).map((image, index) => (
-                        <div key={index} className="circular-image-container">
-                            <img src={image} alt={`Circular image ${index}`} className="circular-image" />
-                        </div>
-                    ))}
-                </div>
-                {/* Add additional divs if there are more images */}
-                {sampleImages.length > 3 && (
+                {/* Circular Images Grid */}
+                {/* Swipeable Views for Circular Images */}
+                <SwipeableViews enableMouseEvents slideStyle={{display: 'flex'}}>
                     <div className="swipe-view-container">
-                        {sampleImages.slice(3, 6).map((image, index) => (
+                        {sampleImages.slice(0, 3).map((image, index) => (
                             <div key={index} className="circular-image-container">
-                                <img src={image} alt={`Circular image ${index + 3}`} className="circular-image" />
+                                <img src={image} alt={`Circular image ${index}`} className="circular-image"/>
                             </div>
                         ))}
                     </div>
-                )}
-                {/* You can add more divs if you have more than 6 images */}
-            </SwipeableViews>
-            {/* Swipeable Views for Product Collection */}
-            <Box className="product-collection-container">
-                <Typography variant="h4" align="center" className="collection-title">
-                    Fall Favorites
-                </Typography>
-                <Box className="products-swipe-container">
-                    <SwipeableViews enableMouseEvents>
-                        {chunkedProducts.map((chunk, index) => (
-                            <Box key={index} className="product-swipe-slide">
-                                {chunk.map((product, index) => (
-                                    <Box key={index} className="product-item">
-                                        <img src={product.imgPath} alt={product.label} className="product-image" />
-                                        <Typography variant="body2" align="center">{product.label}</Typography>
-                                    </Box>
-                                ))}
-                            </Box>
-                        ))}
-                    </SwipeableViews>
+                    {/* Add additional divs if there are more images */}
+                    {sampleImages.length > 3 && (
+                        <div className="swipe-view-container">
+                            {sampleImages.slice(3, 6).map((image, index) => (
+                                <div key={index} className="circular-image-container">
+                                    <img src={image} alt={`Circular image ${index + 3}`}
+                                         className="circular-image"/>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {/* You can add more divs if you have more than 6 images */}
+                </SwipeableViews>
+                {/* Swipeable Views for Product Collection */}
+                <Box className="product-collection-container">
+                    <Typography variant="h4" align="center" className="collection-title">
+                        Fall Favorites
+                    </Typography>
+                    <Box className="products-swipe-container">
+                        <SwipeableViews enableMouseEvents>
+                            {chunkedProducts.map((chunk, index) => (
+                                <Box key={index} className="product-swipe-slide">
+                                    {chunk.map((product, index) => (
+                                        <Box key={index} className="product-item">
+                                            <img src={product.imgPath} alt={product.label}
+                                                 className="product-image"/>
+                                            <Typography variant="body2"
+                                                        align="center">{product.label}</Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            ))}
+                        </SwipeableViews>
+                    </Box>
                 </Box>
-            </Box>
 
-            {/* Video Player */}
-            <Box sx={{ padding: 2 }}>
-                <VideoPlayer url="path/to/video.mp4" playing controls />
-            </Box>
+                {/* Video Player */}
+                <Box sx={{padding: 2}}>
+                    <VideoPlayer url="path/to/video.mp4" playing controls/>
+                </Box>
 
-            {/* Grid of Images */}
-            <Grid container spacing={2} sx={{ padding: 2 }}>
-                {sampleImages.map((image, index) => (
-                    <Grid item xs={6} md={4} key={index}>
-                        <Paper>
-                            <img src={image} alt={`Image ${index}`} style={{ width: '100%', height: 'auto' }} />
-                        </Paper>
-                    </Grid>
-                ))}
-            </Grid>
-        </Box>
+                {/* Grid of Images */}
+                <Grid container spacing={2} sx={{padding: 2}}>
+                    {sampleImages.map((image, index) => (
+                        <Grid item xs={6} md={4} key={index}>
+                            <Paper>
+                                <img src={image} alt={`Image ${index}`}
+                                     style={{width: '100%', height: 'auto'}}/>
+                            </Paper>
+                        </Grid>
+                    ))}
+                </Grid>
             </Box>
+        );
+    };
+    return (
+        <div className="iphone-wrapper">
 
-            {/* Bottom Home Indicator */}
-            <Box className="iphone-home-indicator" />
-        </Box>
+            <Box className="iphone-container">
+                {/* AppBar with Logo and Search Icon */}
+                <AppBar position="static" color="default" elevation={0} className="appbar">
+                    <Toolbar>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            aria-label="menu"
+                            onClick={toggleDrawer(true)}
+                            className="menu-button"
+                        >
+                            <MenuIcon/>
+                        </IconButton>
+                        <Typography variant="h6" className="app-logo">
+                            <img src={logoImage} alt="App Logo" className="logo-image"/>
+                        </Typography>
+                        <IconButton
+                            edge="end"
+                            color="inherit"
+                            aria-label="search"
+                            onClick={handleSearchClick}
+                            className="search-button"
+                        >
+                            <SearchIcon/>
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
+                {/* Top Notch */}
+                <Box className="iphone-notch"/>
+
+                {/* Screen Content */}
+                <Box className="iphone-screen">
+                    {renderItems()}
+
+                </Box>
+
+                {/* Bottom Home Indicator */}
+                <Box className="iphone-home-indicator"/>
+            </Box>
             {/* Drawer */}
             <SwipeableDrawer
                 anchor="left"
@@ -199,3 +247,4 @@ export default function Screen() {
         </div>
     );
 }
+export default Screen;
