@@ -1,0 +1,217 @@
+.iphone-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 50px; /* Adjust this to center the iPhone on the screen */
+}
+
+.iphone-container {
+    width: 375px; /* Typical iPhone width */
+    height: 667px; /* Adjusted for iPhone 15 */
+    border-radius: 36px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+}
+.iphone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 210px;
+    height: 30px;
+    background: #000;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    z-index: 2;
+}
+
+.iphone-screen {
+    padding-top: 64px; /* Increase padding to avoid overlap with the AppBar */
+
+    position: absolute;
+    top: 30px; /* Height of the notch */
+    bottom: 5px; /* Height of the home indicator */
+    left: 0;
+    right: 0;
+    overflow-y: scroll; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    padding-bottom: 34px; /* Space for home indicator */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.menu-button {
+    position: absolute;
+    z-index: 1100; /* Above the drawer */
+    margin: 10px;
+}
+
+/* Drawer Styles */
+.drawer {
+    z-index: 1000; /* High z-index to float above the content */
+}
+
+.drawer-content {
+    width: 250px;
+    max-width: 100%;
+}
+
+
+.iphone-home-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 100px;
+}
+/* Additional styles to adjust the drawer's position */
+.MuiDrawer-root {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.MuiDrawer-paper {
+    position: relative;
+    height: calc(100% - 30px); /* Subtract the notch height */
+    top: 30px; /* Height of the notch */
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+/* ... existing styles ... */
+
+.countdown-timer {
+    margin-top: 16px; /* Adjust as needed */
+}
+
+.circular-images-grid {
+    padding: 20px;
+}
+
+.circular-image-wrapper {
+    width: 80px; /* Adjust size as needed */
+    height: 80px; /* Adjust size as needed */
+    overflow: hidden;
+    border-radius: 50%; /* Makes the image circular */
+    margin: auto; /* Center the image within the grid item */
+}
+
+.circular-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the wrapper without distortion */
+}
+
+/* Add additional styling to position elements within the iPhone emulator */
+/* ... */
+
+.swipe-view-container {
+    display: flex;       /* Flex container for the circles */
+    justify-content: center; /* Center the circles horizontally */
+    padding: 16px;      /* Add some padding around the images */
+}
+
+.circular-image-container {
+    flex: 0 0 33.333%;  /* Each circle takes up a third of the container */
+    display: flex;       /* Use flexbox for centering */
+    justify-content: center; /* Center each circle horizontally */
+    align-items: center; /* Center each circle vertically */
+    padding: 8px;        /* Spacing between circles */
+}
+
+.circular-image {
+    width: 80px;        /* Size of the circular image */
+    height: 80px;       /* Size of the circular image */
+    border-radius: 50%;  /* Makes the image circular */
+    object-fit: cover;   /* Ensures the image covers the wrapper without distortion */
+}
+.appbar {
+    border-radius: 20px 20px 0 0; /* Rounded top corners to match iPhone style */
+    background-color: #ffffff; /* Assuming a light theme for the AppBar */
+    color: #000; /* Color for the icons and logo text */
+}
+
+
+.search-button {
+    margin-left: auto; /* Push the search button to the far right */
+}
+
+.app-logo {
+    flex-grow: 1; /* Allow the logo to take up the available space */
+    text-align: center; /* Center the logo horizontally */
+}
+
+.logo-image {
+    height: 40px; /* Adjust the size of your logo as needed */
+}
+.swipeable-products-container {
+    width: 100%; /* Full width of the screen */
+    overflow: hidden; /* Hide the overflow */
+}
+
+
+.products-title {
+    margin-top: 20px; /* Adjust as needed */
+}
+.products-swipe-container {
+    margin: 16px; /* Adjust as needed */
+    overflow: hidden; /* H}
+
+.product-item {
+    display: inline-block; /* Display items inline */
+    width: calc(40% - 20px); /* Adjust the width to show 2.5 items */
+    margin-right: 3px; /* Add some space between items */
+}
+
+
+.products-swipe-container {
+    margin: 16px; /* Adjust as needed */
+    overflow: hidden; /* Hide the overflow */
+    width: calc(100% + 30px); /* Allow space for 2.5 products */
+}
+.product-swipe-slide {
+    display: flex; /* Align items in a row */
+    justify-content: center; /* Center items horizontally */
+}
+
+.product-swipe-view {
+    display: flex; /* Display products in a row */
+}
+
+.product-item {
+    width: 33.3333%; /* Each product takes up one-third of the slide */
+    padding: 8px; /* Adjust as needed */
+    box-sizing: border-box; /* Include padding and border in the width calculation */
+}
+
+.product-image {
+    width: 100%; /* Full width of the product-item */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 5px; /* Rounded corners for images */
+    display: block; /* Remove any default inline spacing */
+}
+
+
+
+/* Override styles for the react-swipeable-view-container to adjust spacing */
+.react-swipeable-view-container {
+    margin: 0 auto; /* Center the swipe view container */
+}
+.product-collection-title {
+    margin-top: 20px; /* Adjust as needed */
+    /*font-weight: bold; !* Optional: if you want the title to be bold *!*/
+}
+
+.collection-title {
+    margin-bottom: 20px; /* Space between the collection title and the products */
+}

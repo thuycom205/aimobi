@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "AI Mobile Builder"
+client_id = "4e3fce49010776e2956d9b2b6f57a5a5"
+application_url = "https://myodooapp.ngrok.io"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products,read_content,write_content,read_discounts,write_discounts,read_metaobject_definitions,write_metaobject_definitions,read_gift_cards"
+
+[auth]
+redirect_urls = [
+  "https://myodooapp.ngrok.io/auth/callback",
+  "https://myodooapp.ngrok.io/auth/shopify/callback",
+  "https://myodooapp.ngrok.io/api/auth/callback",
+  "https://myodooapp.ngrok.io/.shopify/graphiql/auth/callback"
+]
+
+[webhooks]
+api_version = "2023-10"
+
+[pos]
+embedded = false
+
+[build]
+dev_store_url = "wapstoremuoimot.myshopify.com"

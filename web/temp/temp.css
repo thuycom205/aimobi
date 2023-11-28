@@ -1,0 +1,30 @@
+/* ... existing styles ... */
+
+.products-title {
+    margin-top: 20px; /* Adjust as needed */
+}
+
+.products-swipe-container {
+    margin: 16px; /* Adjust as needed */
+    overflow: hidden; /* Hide the overflow */
+}
+
+.product-swipe-slide {
+    display: flex; /* Align items in a row */
+    justify-content: center; /* Center items horizontally */
+}
+
+.product-item {
+    width: 33.3333%; /* Each product takes up one-third of the slide */
+    padding: 8px; /* Adjust as needed */
+    box-sizing: border-box; /* Include padding and border in the width calculation */
+}
+
+.product-image {
+    width: 100%; /* Full width of the product-item */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 12px; /* Rounded corners for images */
+    display: block; /* Remove any default inline spacing */
+}
+
+/* ... */
