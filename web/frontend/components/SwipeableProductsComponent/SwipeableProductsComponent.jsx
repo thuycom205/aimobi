@@ -15,7 +15,7 @@ const sampleImages = [
     // Add more images as needed
 ];
 
-const SwipeableCircleComponent = () => {
+const SwipeableProductsComponent = () => {
     // Determine how many images per swipe view
     const imagesPerView = 3;
 
@@ -45,4 +45,4 @@ const SwipeableCircleComponent = () => {
     );
 };
 
-export default SwipeableCircleComponent;
+export default SwipeableProductsComponent;
