@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback,useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppBar,ListItemIcon,ListItemText, Toolbar, Typography, Box, List, ListItem,TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Paper, IconButton } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
-import {TopBar, ActionList, Icon, Frame, Text} from '@shopify/polaris';
+import {TopBar, ActionList,Toast, Icon, Frame, Text,ChoiceList} from '@shopify/polaris';
 import {ArrowLeftMinor, QuestionMarkMajor} from '@shopify/polaris-icons';
 import './App.css'; // Make sure to include the CSS file for additional styling
 import { Card, CardMedia, CardContent, CardActions } from '@mui/material';
@@ -37,9 +37,12 @@ import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import HistoryIcon from '@mui/icons-material/History';
 import RestoreIcon from '@mui/icons-material/Restore';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import {Page} from '@shopify/polaris';
 
 
 import Screen from './page_builder_sample.jsx';
+import { ResourcePicker } from '@shopify/app-bridge-react';
+
 const ITEM_TYPE = 'ITEM';
 const carouselItems = [
     { imgPath: 'https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/459619/item/goods_28_459619.jpg', label: 'First Image' },
@@ -128,12 +131,42 @@ const DraggableListItem = ({ item, index, moveListItem, onSettingsClick }) => {
     );
 };
 
-const ItemSettingsPanel = ({ selectedItem, closePanel, updateItem }) => {
+const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem }) => {
+    const [localSettings, setLocalSettings] = useState(selectedItem.settings);
+
+    const [showResourcePicker, setShowResourcePicker] = useState(false);
+
     // Handlers for updating the settings of the selected item
     const handleMarginChange = (event) => {
-        updateItem(selectedItem.type, { ...selectedItem.settings, margin: event.target.value });
+        updateItem(selectedIndex, { ...selectedItem.settings, margin: event.target.value });
+    };
+    useEffect(() => {
+        // Update local state when selectedItem changes
+        setLocalSettings(selectedItem.settings);
+    }, [selectedItem,localSettings]);
+
+    // Update local state and then update the item
+    const handleActionTypeChange = (value) => {
+        const newActionType = value[0];
+        const updatedSettings = { ...localSettings, action_type: newActionType };
+        updateItem(selectedIndex, updatedSettings);
+        setLocalSettings(updatedSettings);
     };
 
+    const handleWebUrlChange = (event) => {
+        updateItem(selectedIndex, { ...selectedItem.settings, web_url: event.target.value });
+    };
+
+    const handleResourceSelection = (resources) => {
+        setShowResourcePicker(false);
+        // Assuming resources return IDs, update the item with selected resource IDs
+        const updatedSettings = resources.selection.map(r => r.id);
+        updateItem(selectedIndex, { ...selectedItem.settings, resource_ids: updatedSettings });
+    };
+
+    const handleShowResourcePicker = () => {
+        console.log(selectedIndex);
+    }
     // ...
 
     return (
@@ -147,7 +180,40 @@ const ItemSettingsPanel = ({ selectedItem, closePanel, updateItem }) => {
                 onChange={handleMarginChange}
                 // You can add more settings fields as needed
             />
-            {/* Add other settings fields as required */}
+            <ChoiceList
+                title="Action Type"
+                choices={[
+                    { label: 'None', value: 'none' },
+                    { label: 'Collection', value: 'collection' },
+                    { label: 'Product', value: 'product' },
+                    { label: 'Web URL', value: 'web_url' },
+
+                    // Add more action types as required
+                ]}
+                selected={localSettings.action_type}
+                onChange={handleActionTypeChange}
+            />
+            {(selectedItem.settings.action_type === 'collection' || selectedItem.settings.action_type === 'product') && (
+                <Button variant="contained" onClick={handleShowResourcePicker}>Browse</Button>
+            )}
+            {selectedItem.settings.action_type === 'web_url' && (
+                <TextField
+                    label="Web URL"
+                    fullWidth
+                    margin="normal"
+                    value={selectedItem.settings.web_url}
+                    onChange={handleWebUrlChange}
+                />
+            )}
+            {showResourcePicker && (
+                <ResourcePicker
+                    resourceType="Product"
+                    showVariants={false}
+                    open={showResourcePicker}
+                    onSelection={handleResourceSelection}
+                    onCancel={() => setShowResourcePicker(false)}
+                />
+            )}
             <Button variant="contained" onClick={closePanel}>Close</Button>
         </Box>
     );
@@ -172,7 +238,6 @@ function App() {
 
 
     const handleNavigationToggle = useCallback(() => {
-        console.log('toggle navigation visibility');
     }, []);
     const userMenuMarkup = (
         <TopBar.UserMenu
@@ -235,12 +300,11 @@ function App() {
         />
     );
     const [settingsPanelOpen, setSettingsPanelOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState({ item: null, index: -1 });
 
-    // ... (other handlers remain unchanged)
-
-    const handleSettingsClick = (item) => {
-        setSelectedItem(item);
+// When an item's settings icon is clicked
+    const handleSettingsClick = (item, index) => {
+        setSelectedItem({ item, index });
         setSettingsPanelOpen(true);
     };
 
@@ -248,18 +312,21 @@ function App() {
         setSettingsPanelOpen(false);
     };
 
-    const updateItem = (itemType, updatedSettings) => {
-        setItems(items.map(item => {
-            if (item.type === itemType) {
-                return { ...item, settings: updatedSettings };
-            }
-            return item;
-        }));
+    const updateItem = (index, updatedSettings) => {
+        const updatedItems = [...items];
+        const itemToUpdate = updatedItems[index];
+        updatedItems[index] = { ...itemToUpdate, settings: updatedSettings };
+        setItems(updatedItems);
+        setSelectedItem({ item: updatedItems[index], index });
+
     };
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [items, setItems] = useState([]);
     const [selectedItemType, setSelectedItemType] = useState('');
+    const handleSubmit = () => {
+        console.log(items);
+    }
 
     const moveListItem = useCallback((dragIndex, hoverIndex) => {
         const dragItem = items[dragIndex];
@@ -277,10 +344,11 @@ function App() {
         const newItem = {
             type: type,
             settings: {
-                // default settings for new item, can be customized
                 margin: '1px',
-                action_type: type === 'divider' ? 'none' : 'collection', // as an example
-                collection_id: type === 'divider' ? null : 1, // as an example
+                action_type: 'none', // default action type
+                collection_id: null, // default collection_id
+                product_ids: [],
+                web_url: '' // default web URL
             }
         };
         setItems([...items, newItem]);
@@ -290,7 +358,6 @@ function App() {
     const renderDialogItem = (type) => {
         // Declare Icon variable outside the if-else scope
         let Icon;
-        console.log(type);
 
         // Assign the appropriate icon or default to the Icon variable
         if (itemIcons[type] === undefined) {
@@ -313,48 +380,29 @@ function App() {
         );
     };
 
-// Example component for Countdown
-    const CountdownComponent = () => {
-        // Countdown logic goes here
-        return <Typography>Countdown Timer</Typography>;
-    };
 
-// Example component for Circle of Collections
-    const CircleCollectionComponent = () => {
-        // Circle collection logic goes here
-        return <Typography>Circle of Collections</Typography>;
-    };
-
-// ... you will need to create or define components for each of the new item types
-
-// Then in the renderPreview function, add cases for the new item types
-    const renderPreview = useCallback(() => {
-        return items.map((type, index) => {
-            switch (type) {
-                case itemTypes.DIVIDER:
-                    return <Divider key={index} />;
-                case itemTypes.TITLE:
-                    return <Typography key={index} variant="h5">Title</Typography>;
-                case itemTypes.COUNTDOWN:
-                    return <CountdownComponent key={index} />;
-                // ... cases for other new types
-                default:
-                    return <div key={index}>Unsupported item type</div>;
-            }
-        });
-    }, [items]);
 
     return (
         <Frame   topBar={topBarMarkup}>
+            <Page title="Page Builder"
+                  primaryAction={{
+                      content: 'Save',
+                      onAction: () => {
+                         handleSubmit() // Close the modal after adding the element
+                      },
+                  }}
+                    secondaryActions={[
+                        {   content: 'Back to Home',
+                            onAction: () => {
+                               // handleAddElement(optionTypeSelected);
+                               // toggleModal(); // Close the modal after adding the element
+                            },
+                        },
+                        ]}
+
+                  separator>
 
         <DndProvider backend={HTML5Backend}>
-            {/*<AppBar position="static">*/}
-            {/*    <Toolbar>*/}
-            {/*        <Typography variant="h6" color="inherit">*/}
-            {/*            Mobile App Builder*/}
-            {/*        </Typography>*/}
-            {/*    </Toolbar>*/}
-            {/*</AppBar>*/}
 
             <Box display="flex">
                 <Box width="256px" bgcolor="#f0f0f0" height="100vh">
@@ -365,7 +413,7 @@ function App() {
                                 item={item}
                                 index={index}
                                 moveListItem={moveListItem}
-                                onSettingsClick={() => handleSettingsClick(item)}
+                                onSettingsClick={() => handleSettingsClick(item,index)}
                             />
                         ))}
                         <ListItem button onClick={handleDialogToggle}>
@@ -399,13 +447,15 @@ function App() {
             >
                 {selectedItem && (
                     <ItemSettingsPanel
-                        selectedItem={selectedItem}
+                        selectedItem={selectedItem.item}
+                        selectedIndex={selectedItem.index}
                         closePanel={closeSettingsPanel}
                         updateItem={updateItem}
                     />
                 )}
             </Drawer>
         </DndProvider>
+            </Page>
         </Frame>
     );
 }
