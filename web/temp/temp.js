@@ -1,97 +1,81 @@
-// Import additional icons for different menu types
-import HomeIcon from '@mui/icons-material/Home';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
-import WebIcon from '@mui/icons-material/Web';
-import CollectionIcon from '@mui/icons-material/Collections';
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    ChoiceList,
+    ResourcePicker,
+} from '@shopify/polaris';
+import React, { useState } from 'react';
 
 // ...
 
-// Update your menu item types to include icons for easy identification
-const menuTypeIcons = {
-    home: HomeIcon,
-    cart: ShoppingCartIcon,
-    notification: NotificationsIcon,
-    account: AccountCircleIcon,
-    setting: SettingsIcon,
-    web_url: WebIcon,
-    collection: CollectionIcon,
-};
-
-// ...
-
-const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
-    const [title, setTitle] = useState(selectedItem.title);
-    const [menuType, setMenuType] = useState(selectedItem.type);
-
-    const handleSave = () => {
-        onSave(selectedItem.id, { title, type: menuType });
-        onClose();
-    };
-
-    return (
-        <div>
-            <Typography variant="h6">Menu Item Settings</Typography>
-            <TextField
-                label="Title"
-                fullWidth
-                margin="normal"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            {/* Dropdown to select menu item type */}
-            <TextField
-                select
-                label="Menu Type"
-                fullWidth
-                margin="normal"
-                value={menuType}
-                onChange={(e) => setMenuType(e.target.value)}
-                SelectProps={{
-                    native: true,
-                }}
-            >
-                {Object.keys(menuTypeIcons).map((type) => (
-                    <option key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </option>
-                ))}
-            </TextField>
-            <Button variant="contained" onClick={handleSave}>Save</Button>
-        </div>
-    );
-};
-
-// ...
-
-const addMenuItem = () => {
+const handleAddNewItem = (type) => {
     const newItem = {
-        id: Math.random(), // or any other unique id
-        title: 'New Item',
-        type: 'home', // default menu type
+        type: type,
+        settings: {
+            margin: '1px',
+            action_type: 'none', // default action type
+            collection_id: null, // default collection_id
+            product_ids: [], // default product IDs
+        }
     };
-    setMenuItems([...menuItems, newItem]);
+    setItems([...items, newItem]);
+    handleDialogToggle();
 };
 
-// ...
+const ItemSettingsPanel = ({ selectedItem, closePanel, updateItem }) => {
+    const [showResourcePicker, setShowResourcePicker] = useState(false);
 
-// In your DraggableMenuItem, use the correct icon for the menu type
-const DraggableMenuItem = ({ id, text, type, index, moveMenuItem, onSettingsClick }) => {
-    // ...
-    const MenuIcon = menuTypeIcons[type] || DefaultIcon; // Use the icon from menuTypeIcons
+    const handleMarginChange = (event) => {
+        updateItem(selectedItem.type, { ...selectedItem.settings, margin: event.target.value });
+    };
+
+    const handleActionTypeChange = (value) => {
+        updateItem(selectedItem.type, { ...selectedItem.settings, action_type: value });
+        if (value === 'collection' || value === 'product') {
+            setShowResourcePicker(true);
+        }
+    };
+
+    const handleResourceSelection = (resources) => {
+        setShowResourcePicker(false);
+        // Update the selectedItem with selected resources
+        // This logic depends on how you want to handle the selected resources
+        // For example, you might want to store collection IDs or product IDs
+    };
 
     return (
-        <ListItem
-            // ...
-        >
-            <ListItemIcon>
-                <MenuIcon /> {/* Use the specific icon for the menu type */}
-            </ListItemIcon>
-            {/* ... */}
-        </ListItem>
+        <Box p={2} width="250px">
+            <Typography variant="h6">Item Settings</Typography>
+            <TextField
+                label="Margin"
+                fullWidth
+                margin="normal"
+                value={selectedItem.settings.margin}
+                onChange={handleMarginChange}
+            />
+            <ChoiceList
+                title="Action Type"
+                choices={[
+                    { label: 'None', value: 'none' },
+                    { label: 'Collection', value: 'collection' },
+                    { label: 'Product', value: 'product' },
+                    // Add more action types as required
+                ]}
+                selected={selectedItem.settings.action_type}
+                onChange={handleActionTypeChange}
+            />
+            {showResourcePicker && (
+                <ResourcePicker
+                    resourceType="Product"
+                    showVariants={false}
+                    open={showResourcePicker}
+                    onSelection={handleResourceSelection}
+                    onCancel={() => setShowResourcePicker(false)}
+                />
+            )}
+            <Button variant="contained" onClick={closePanel}>Close</Button>
+        </Box>
     );
 };
-
-// ...
