@@ -42,6 +42,7 @@ import {Page} from '@shopify/polaris';
 
 import Screen from './page_builder_sample.jsx';
 import { ResourcePicker } from '@shopify/app-bridge-react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,Link } from '@mui/material';
 
 const ITEM_TYPE = 'ITEM';
 const carouselItems = [
@@ -159,15 +160,65 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
 
     const handleResourceSelection = (resources) => {
         setShowResourcePicker(false);
-        // Assuming resources return IDs, update the item with selected resource IDs
-        const updatedSettings = resources.selection.map(r => r.id);
-        updateItem(selectedIndex, { ...selectedItem.settings, resource_ids: updatedSettings });
+        const selectedResources = resources.selection.map(({ id, title, handle }) => ({ id, title, handle }));
+
+        let updatedSettings;
+        if (localSettings.action_type === 'collection') {
+            updatedSettings = { ...localSettings, collection_action: selectedResources };
+        } else if (localSettings.action_type === 'product') {
+            updatedSettings = { ...localSettings, product_action: selectedResources };
+        }
+
+        setLocalSettings(updatedSettings);
+        updateItem(selectedIndex, updatedSettings);
+    };
+
+    const handleDeleteResource = (resourceId) => {
+        const actionKey = localSettings.action_type === 'collection' ? 'collection_action' : 'product_action';
+        const updatedResources = localSettings[actionKey].filter(resource => resource.id !== resourceId);
+        const updatedSettings = { ...localSettings, [actionKey]: updatedResources };
+        setLocalSettings(updatedSettings);
+        updateItem(selectedIndex, updatedSettings);
     };
 
     const handleShowResourcePicker = () => {
         console.log(selectedIndex);
+        setShowResourcePicker(true);
     }
-    // ...
+    const createUrl = (handle, type) => {
+        // Replace with your actual URL structure
+        return 'https://' + window.shop_name + `/${type}/${handle}`;
+    };
+    const renderResourceTable = (resources, type) => {
+        return (
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Title</TableCell>
+                            <TableCell>View</TableCell>
+                            <TableCell>Delete</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {resources.map((resource) => (
+                            <TableRow key={resource.id}>
+                                <TableCell>{resource.title}</TableCell>
+                                <TableCell>
+                                    <Link href={createUrl(resource.handle, type)} target="_blank" rel="noopener noreferrer">
+                                        View
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                    <Button onClick={() => handleDeleteResource(resource.id)}>Delete</Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        );
+    };
 
     return (
         <Box p={2} width="250px">
@@ -214,6 +265,8 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
                     onCancel={() => setShowResourcePicker(false)}
                 />
             )}
+            {localSettings.collection_action && renderResourceTable(localSettings.collection_action, 'collections')}
+            {localSettings.product_action && renderResourceTable(localSettings.product_action, 'products')}
             <Button variant="contained" onClick={closePanel}>Close</Button>
         </Box>
     );
@@ -221,7 +274,11 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
 
 
 function App() {
-    // ...
+    const [screenId, setScreenId] = useState(0);
+    const [screenTitle, setScreenTitle] = useState('Home');
+    const [pageType, setPageType] = useState('home');
+    const [status, setStatus] = useState('active');
+
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isSecondaryMenuOpen, setIsSecondaryMenuOpen] = useState(false);
 
@@ -324,9 +381,87 @@ function App() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [items, setItems] = useState([]);
     const [selectedItemType, setSelectedItemType] = useState('');
-    const handleSubmit = () => {
-        console.log(items);
-    }
+    const handleSubmit = async () => {
+        const pageContentJson = JSON.stringify(items);
+
+        const payload = {
+            id: screenId, // If this is an update to an existing screen
+            shop_name: window.shop_name, // Replace with actual shop name
+            title: screenTitle,
+            page_type: pageType,
+            page_content: pageContentJson,
+            status: status,
+            page_title: 'Your Page Title' // Replace with actual page title
+        };
+
+        try {
+            // Replace with your API endpoint
+            const url =  window.dev_server + '/api/screen_mobile/save';
+            const response = await fetch(url, {
+                method: 'POST', // Use 'PUT' if updating an existing screen
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // Handle the response
+            const data = await response.json();
+            console.log('Submission successful:', data);
+        } catch (error) {
+            console.error('Submission failed:', error);
+        }
+    };
+    useEffect(() => {
+        const fetchScreenData = async (id) => {
+            try {
+                let url_to_fetch = window.dev_server + `/api/mobile_screen/fetch?shop=` + window.shop_name;
+                if (id >  0) {
+                     url_to_fetch = window.dev_server + `/api/mobile_screen/fetch?id=${id}&shop=` + window.shop_name;
+                }
+                const response = await fetch(url_to_fetch, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers like authorization if needed
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                 const data = await response.json();
+                // const data = response.json();
+                // Assuming the response returns an object with the screen data
+                setScreenTitle(data.title);
+                setPageType(data.page_type);
+                setStatus(data.status);
+                // setPageTitle(data.page_title);
+
+                if (data.page_content) {
+                    const itemsArray = JSON.parse(data.page_content);
+                    setItems(itemsArray);
+                }
+            } catch (error) {
+                console.error('Error fetching screen data:', error);
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const idFromUrl = urlParams.get('id');
+        if (idFromUrl) {
+            setScreenId(idFromUrl);
+            fetchScreenData(idFromUrl);
+        } else {
+            fetchScreenData(0);
+        }
+    }, []);
+
 
     const moveListItem = useCallback((dragIndex, hoverIndex) => {
         const dragItem = items[dragIndex];
@@ -346,8 +481,8 @@ function App() {
             settings: {
                 margin: '1px',
                 action_type: 'none', // default action type
-                collection_id: null, // default collection_id
-                product_ids: [],
+                collection_action: [], // Initialize with an empty array
+                product_action: [],
                 web_url: '' // default web URL
             }
         };

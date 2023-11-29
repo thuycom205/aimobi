@@ -18,7 +18,7 @@ use Shopify\Exception\InvalidWebhookException;
 use Shopify\Utils;
 use Shopify\Webhooks\Registry;
 use Shopify\Webhooks\Topics;
-
+use App\Http\Controllers\MobileScreenController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -143,3 +143,8 @@ Route::post('/api/webhooks', function (Request $request) {
         return response()->json(['message' => "Got an exception when handling '$topic' webhook"], 500);
     }
 });
+
+
+Route::get('/api/mobile_screen/fetch',  [MobileScreenController::class, 'fetch']);
+Route::post('/api/screen_mobile/save', [MobileScreenController::class, 'save']);
+
