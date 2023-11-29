@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback ,useEffect} from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
@@ -25,6 +25,9 @@ import CollectionIcon from '@mui/icons-material/Collections';
 
 import ScreenMenu from './screen_for_menu_builder';
 import MenuIcon from "@mui/icons-material/Menu";
+import {Page,Frame,Toast,Tooltip} from '@shopify/polaris';
+import { ResourcePicker } from '@shopify/app-bridge-react';
+
 const ITEM_TYPE = 'MENU_ITEM';
 const menuTypeIcons = {
     home: HomeIcon,
@@ -122,6 +125,10 @@ const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
 };
 
 function App() {
+    const [menuId, setMenuId] = useState(0);
+    const [menuTitle, setMenuTitle] = useState('Untitled');
+    const [menuType, setMenuType] = useState('drawer');
+
     const [menuItems, setMenuItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
     const [settingsPanelOpen, setSettingsPanelOpen] = useState(false);
@@ -165,8 +172,99 @@ function App() {
         };
         setMenuItems([...menuItems, newItem]);
     };
+    const handleSubmit = async () => {
+        const menuItemsJson = JSON.stringify(menuItems);
+
+        const payload = {
+            id: menuId,
+            shop_name: window.shop_name, // Replace with actual shop name
+            title: menuTitle,
+            menu_type: menuType,
+            menu_items: menuItemsJson
+        };
+
+        try {
+            const url = window.dev_server + '/api/mobile_menu/save';
+            const response = await fetch(url, {
+                method: 'POST', // Use 'PUT' if updating an existing menu
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log('Menu saved successfully:', data);
+            // Optionally, show a success message to the user
+        } catch (error) {
+            console.error('Failed to save menu:', error);
+            // Optionally, show an error message to the user
+        }
+    };
+
+    useEffect(() => {
+        const fetchMenuData = async (id) => {
+            try {
+                let url = window.dev_server + `/api/mobile_menu/fetch?shop=` + window.shop_name;
+                if (id >  0) {
+                    url = window.dev_server + `/api/mobile_menu/fetch?id=${id}&shop=` + window.shop_name;
+                }
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers like authorization if needed
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                setMenuTitle(data.title);
+                setMenuType(data.menu_type);
+                if (data.menu_items) {
+                    const itemsArray = JSON.parse(data.menu_items);
+                    setMenuItems(itemsArray);
+                }
+            } catch (error) {
+                console.error('Error fetching menu data:', error);
+            }
+        };
+        const urlParams = new URLSearchParams(window.location.search);
+        const idFromUrl = urlParams.get('id');
+        if (idFromUrl) {
+            setMenuId(idFromUrl);
+            fetchMenuData(idFromUrl);
+        } else {
+            fetchMenuData(0);
+        }
+    }, []);
 
     return (
+        <Frame>
+            <Page fullWidth title="Page Builder"
+                  primaryAction={{
+                      content: 'Save',
+                      onAction: () => {
+                          handleSubmit() // Close the modal after adding the element
+                      },
+                  }}
+                  secondaryActions={[
+                      {   content: 'Back to Home',
+                          onAction: () => {
+                              // handleAddElement(optionTypeSelected);
+                              // toggleModal(); // Close the modal after adding the element
+                          },
+                      },
+                  ]}
+
+                  separator>
         <DndProvider backend={HTML5Backend}>
             <Box display="flex">
                 <Box width="256px" bgcolor="#f0f0f0" height="100vh" overflow="auto">
@@ -201,6 +299,8 @@ function App() {
                 <ScreenMenu menuItems={menuItems} toggleDrawerz={toggleScreenDrawer} drawerOpenz={isScreenDrawerOpen} />
             </Box>
         </DndProvider>
+            </Page>
+        </Frame>
     );
 }
 

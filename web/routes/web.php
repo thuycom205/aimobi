@@ -19,6 +19,7 @@ use Shopify\Utils;
 use Shopify\Webhooks\Registry;
 use Shopify\Webhooks\Topics;
 use App\Http\Controllers\MobileScreenController;
+use App\Http\Controllers\MobileMenuController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -147,4 +148,8 @@ Route::post('/api/webhooks', function (Request $request) {
 
 Route::get('/api/mobile_screen/fetch',  [MobileScreenController::class, 'fetch']);
 Route::post('/api/screen_mobile/save', [MobileScreenController::class, 'save']);
+
+Route::get('/api/mobile_menu/fetch', [MobileMenuController::class, 'fetch']);
+Route::post('/api/mobile_menu/save', [MobileMenuController::class, 'save']);
+
 

@@ -519,7 +519,7 @@ function App() {
 
     return (
         <Frame   topBar={topBarMarkup}>
-            <Page title="Page Builder"
+            <Page fullWidth title="Page Builder"
                   primaryAction={{
                       content: 'Save',
                       onAction: () => {
