@@ -1,87 +1,101 @@
-const ItemSettingsPanel = ({ selectedItem, selectedIndex, closePanel, updateItem }) => {
-    const [localSettings, setLocalSettings] = useState(selectedItem.settings);
+// ... (existing imports and definitions)
 
-    useEffect(() => {
-        setLocalSettings(selectedItem.settings);
-    }, [selectedItem]);
+const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
+    const [title, setTitle] = useState(selectedItem.title);
+    const [menuType, setMenuType] = useState(selectedItem.type);
+    const [collectionInfo, setCollectionInfo] = useState(selectedItem.collection_info || []);
 
-    const handleMarginChange = (event) => {
-        const updatedSettings = { ...localSettings, margin: event.target.value };
-        setLocalSettings(updatedSettings);
-        updateItem(selectedIndex, updatedSettings);
+    const handleSave = () => {
+        onSave(selectedItem.id, { title, type: menuType, collection_info: collectionInfo });
+        onClose();
     };
 
-    const handleActionTypeChange = (value) => {
-        const newActionType = value[0];
-        const updatedSettings = { ...localSettings, action_type: newActionType };
-        setLocalSettings(updatedSettings);
-        updateItem(selectedIndex, updatedSettings);
-    };
-
-    const handleWebUrlChange = (event) => {
-        const updatedSettings = { ...localSettings, web_url: event.target.value };
-        setLocalSettings(updatedSettings);
-        updateItem(selectedIndex, updatedSettings);
+    const handleOpenResourcePicker = () => {
+        // Logic to open Resource Picker
     };
 
     const handleResourceSelection = (resources) => {
-        setShowResourcePicker(false);
-        const selectedResources = resources.selection.map(({ id, title, handle }) => ({ id, title, handle }));
-
-        let updatedSettings;
-        if (localSettings.action_type === 'collection') {
-            updatedSettings = { ...localSettings, collection_action: selectedResources };
-        } else if (localSettings.action_type === 'product') {
-            updatedSettings = { ...localSettings, product_action: selectedResources };
-        }
-
-        setLocalSettings(updatedSettings);
-        updateItem(selectedIndex, updatedSettings);
+        const selectedCollection = resources.selection[0]; // Assuming single selection
+        setCollectionInfo([{ id: selectedCollection.id, title: selectedCollection.title, handle: selectedCollection.handle }]);
     };
 
-    const handleDeleteResource = (resourceId) => {
-        const actionKey = localSettings.action_type === 'collection' ? 'collection_action' : 'product_action';
-        const updatedResources = localSettings[actionKey].filter(resource => resource.id !== resourceId);
-        const updatedSettings = { ...localSettings, [actionKey]: updatedResources };
-        setLocalSettings(updatedSettings);
-        updateItem(selectedIndex, updatedSettings);
-    };
-
-    const renderResourceTable = (resources) => {
-        return (
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Handle</TableCell>
-                            <TableCell>Delete</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {resources.map((resource) => (
-                            <TableRow key={resource.id}>
-                                <TableCell>{resource.id}</TableCell>
-                                <TableCell>{resource.title}</TableCell>
-                                <TableCell>{resource.handle}</TableCell>
-                                <TableCell>
-                                    <Button onClick={() => handleDeleteResource(resource.id)}>Delete</Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        );
+    const handleDeleteCollection = (collectionId) => {
+        setCollectionInfo(collectionInfo.filter(info => info.id !== collectionId));
     };
 
     return (
-        <Box p={2} width="250px">
-            {/* ... existing fields */}
-            {/* Render tables for collection_action and product_action if they exist */}
-            {localSettings.collection_action && renderResourceTable(localSettings.collection_action)}
-            {localSettings.product_action && renderResourceTable(localSettings.product_action)}
-        </Box>
+        <div>
+            <Typography variant="h6">Menu Item Settings</Typography>
+            <TextField
+                label="Title"
+                fullWidth
+                margin="normal"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+            />
+            {/* Dropdown to select menu item type */}
+            <TextField
+                select
+                label="Menu Type"
+                fullWidth
+                margin="normal"
+                value={menuType}
+                onChange={(e) => setMenuType(e.target.value)}
+                SelectProps={{
+                    native: true,
+                }}
+            >
+                {Object.keys(menuTypeIcons).map((type) => (
+                    <option key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </option>
+                ))}
+            </TextField>
+            {menuType === 'collection' && (
+                <>
+                    <Button variant="contained" onClick={handleOpenResourcePicker}>Browse</Button>
+                    {collectionInfo.length > 0 && (
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Title</TableCell>
+                                        <TableCell>View</TableCell>
+                                        <TableCell>Delete</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {collectionInfo.map((info) => (
+                                        <TableRow key={info.id}>
+                                            <TableCell>{info.title}</TableCell>
+                                            <TableCell>
+                                                <a href={`/collections/${info.handle}`} target="_blank">View</a>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button onClick={() => handleDeleteCollection(info.id)}>Delete</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                </>
+            )}
+            <Button variant="contained" onClick={handleSave}>Save</Button>
+        </div>
     );
 };
+
+const addMenuItem = () => {
+    const newItem = {
+        id: Math.random(),
+        title: 'New Item',
+        type: 'home',
+        collection_info: []
+    };
+    setMenuItems([...menuItems, newItem]);
+};
+
+// ... (rest of the App component including ResourcePicker logic)
+

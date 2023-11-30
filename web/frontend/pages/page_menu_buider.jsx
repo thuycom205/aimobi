@@ -27,6 +27,7 @@ import ScreenMenu from './screen_for_menu_builder';
 import MenuIcon from "@mui/icons-material/Menu";
 import {Page,Frame,Toast,Tooltip} from '@shopify/polaris';
 import { ResourcePicker } from '@shopify/app-bridge-react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,Link,Paper } from '@mui/material';
 
 const ITEM_TYPE = 'MENU_ITEM';
 const menuTypeIcons = {
@@ -85,15 +86,74 @@ const DraggableMenuItem = ({ id, text,type, index, moveMenuItem, onSettingsClick
 const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
     const [title, setTitle] = useState(selectedItem.title);
     const [menuType, setMenuType] = useState(selectedItem.type);
+    const [webUrl, setWebUrl] = useState(selectedItem.web_url || '');
+    const [collectionInfo, setCollectionInfo] = useState(selectedItem.collection_info || []);
+    const [showResourcePicker, setShowResourcePicker] = useState(false);
 
     const handleSave = () => {
-        onSave(selectedItem.id, { title, type: menuType });
+        onSave(selectedItem.id, { title, type: menuType, web_url : webUrl, collection_info: collectionInfo });
         onClose();
     };
+    const handleWebUrlChange = (event) => {
+        setWebUrl(event.target.value);
+        onSave(selectedItem.id, { title, type: menuType, web_url : webUrl, collection_info: collectionInfo });
+
+    };
+    const handleResourceSelection = (resources) => {
+        setShowResourcePicker(false);
+        const selectedCollection = resources.selection[0]; // Assuming single selection
+        setCollectionInfo([{ id: selectedCollection.id, title: selectedCollection.title, handle: selectedCollection.handle }]);
+        onSave(selectedItem.id, { title, type: menuType, web_url : webUrl, collection_info: collectionInfo });
+
+    };
+    // Function to render the table
+    const renderTable = () => {
+        if (collectionInfo.length === 0) return null; // Return null if collectionInfo is empty
+
+        return (
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Title</TableCell>
+                            <TableCell>View</TableCell>
+                            <TableCell>Delete</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {collectionInfo.map((info) => (
+                            <TableRow key={info.id}>
+                                <TableCell>{info.title}</TableCell>
+                                <TableCell>
+                                    <a href={'https://' + window.shop_name+ `/collections/${info.handle}`} target="_blank" rel="noopener noreferrer">View</a>
+                                </TableCell>
+                                <TableCell>
+                                    <Button onClick={() => handleDeleteCollection(info.id)}>Delete</Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        );
+    };
+
+    // Function to handle collection deletion
+    const handleDeleteCollection = (collectionId) => {
+        const updatedCollectionInfo = collectionInfo.filter(info => info.id !== collectionId);
+        setCollectionInfo(updatedCollectionInfo);
+        onSave(selectedItem.id, { title, type: menuType, web_url : webUrl, collection_info: updatedCollectionInfo });
+
+    };
+
+    const handleOpenResourcePicker = () => {
+        setShowResourcePicker(true);
+    }
 
     return (
-        <div>
-            <Typography variant="h6">Menu Item Settings</Typography>
+        <Box p={2}>
+
+        <Typography variant="h6">Menu Item Settings</Typography>
             <TextField
                 label="Title"
                 fullWidth
@@ -119,8 +179,35 @@ const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
                     </option>
                 ))}
             </TextField>
+            {menuType === 'web_url' && (
+                <TextField
+                    label="Web URL"
+                    fullWidth
+                    margin="normal"
+                    value={webUrl}
+                    onChange={handleWebUrlChange}
+                />
+            )}
+            {menuType === 'collection' && (
+                <>
+                   <Box mt={2}>
+                    <Button variant="contained" onClick={handleOpenResourcePicker}>Browse</Button>
+                    </Box>
+                    {renderTable()}
+                </>
+            )}
+            {showResourcePicker && (
+                <ResourcePicker
+                    resourceType="Collection"
+                    open={showResourcePicker}
+                    onSelection={handleResourceSelection}
+                    onCancel={() => setShowResourcePicker(false)}
+                />
+            )}
+            <Box mt={2}>
             <Button variant="contained" onClick={handleSave}>Save</Button>
-        </div>
+            </Box>
+        </Box>
     );
 };
 
@@ -169,6 +256,8 @@ function App() {
             id: Math.random(), // or any other unique id
             title: 'New Item',
             type: 'home', // default menu type
+            web_url: '',
+            collection_info: []
         };
         setMenuItems([...menuItems, newItem]);
     };
