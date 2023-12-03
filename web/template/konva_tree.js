@@ -44,13 +44,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // });
     // layer.add(secondEar);
 // Create a parent node (circle) at the left middle of the stage
+    var uniqueIdx = 'rect' + new Date().getTime() + '-' + Math.floor(Math.random() * 1000);
+    var uniqueIdx2 = 'ear' + new Date().getTime() + '-' + Math.floor(Math.random() * 1000);
+    var first_group = new Konva.Group({
+        x: 0,
+        y: 0,
+        parentUniqueId: uniqueIdx,
+        first_parent:'1'
+    });
     var parentNode = new Konva.Circle({
         x: 80, // Slightly away from the absolute left edge for visibility
         y: stage.height() / 2,
         radius: 30,
-        fill: 'red'
+        fill: 'red',
+        shapeKlass: 'rectangle',
+        uniqueId: uniqueIdx
     });
-    layer.add(parentNode);
+    first_group.add(parentNode);
+    window.parentNode = parentNode;
 
 // Create an 'ear' (rectangle) to the right of the circle
     var ear = new Konva.Rect({
@@ -58,9 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
         y: parentNode.y() - 10, // Adjust the y-coordinate to align it with the middle of the circle
         width: 20,
         height: 20,
-        fill: 'blue'
+        fill: 'blue',
+        uniqueId: uniqueIdx2,
+        parentUniqueId: uniqueIdx
     });
-    layer.add(ear);
+    first_group.add(ear);
 
 // Create a second 'ear' (rectangle) to the left of the circle
     var secondEar = new Konva.Rect({
@@ -68,9 +81,15 @@ document.addEventListener('DOMContentLoaded', function() {
         y: parentNode.y() - 10, // Adjust the y-coordinate to align it with the middle of the circle
         width: 20,
         height: 20,
-        fill: 'purple'
+        fill: 'purple',
+        parentUniqueId: uniqueIdx
+
     });
-    layer.add(secondEar);
+    first_group.add(secondEar);
+
+    layer.add(first_group);
+
+
 
     var selectedArrow = null;
     var isDrawing = false;
@@ -107,7 +126,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     });
-
+    first_group.on('dragmove', function() {
+        redrawArrows();
+    });
     stage.on('mousemove', function() {
         var mousePos = stage.getPointerPosition();
         if (isDrawing) {
@@ -187,6 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var yOffset = 50;  // Vertical spacing between rectangles
 
         for (var i = 0; i < num; i++) {
+            var parentUniqueId = window.parentNode.getAttr('uniqueId');
+            var uniqueId = 'rect' + new Date().getTime() + '-' + Math.floor(Math.random() * 1000);
+            var uniqueId2 = 'ear' + new Date().getTime() + '-' + Math.floor(Math.random() * 1000);
             var x = parentNode.x() + xOffset;
             var y = parentNode.y() + yOffset * i;
 
@@ -197,11 +221,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointerWidth: 10,
                 fill: 'black',
                 stroke: 'black',
-                strokeWidth: 2
+                strokeWidth: 2,
+                uniqueIdPointRect: uniqueId,
+                parentUniqueId: parentUniqueId
             });
 
+            console.log('parentUniqueId',parentUniqueId);
+            arrows.push(arrow);
             // Draw rectangle
-            var rect = createRectangleWithEar(x + 20, y - 10);
+            var rect = createRectangleWithEar(x + 20, y - 10,uniqueId,uniqueId2,parentUniqueId );
 
             layer.add(arrow);
             layer.add(rect);
