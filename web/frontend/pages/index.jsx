@@ -1,4 +1,6 @@
 import {
+    Frame,
+    Navigation,
   Card,
   Page,
   Layout,
@@ -12,10 +14,15 @@ import {
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslation, Trans } from "react-i18next";
 import { useNavigate } from 'react-router-dom';
+import { HomeMinor, MobileHamburgerMajor,
+    EditMinor,
+    CirclePlusOutlineMinor }
+    from '@shopify/polaris-icons';
 
 import { trophyImage } from "../assets";
 
 import { ProductsCard } from "../components";
+import React from 'react';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -31,8 +38,49 @@ export default function HomePage() {
     const handleNavigation3 = () => {
         navigate('/page_menu_buider'); // Replace '/destination-route' with your target route
     }
+    const handleNavigation4 = () => {
+        navigate('/page_notification_form'); // Replace '/destination-route' with your target route
+    }
+    const handleNavigation5 = () => {
+        navigate('/page_app_submission_info'); // Replace '/destination-route' with your target route
+    }
+    const handleNavigation6 = () => {
+        navigate('/page_notification_list'); // Replace '/destination-route' with your target route
+    }
   return (
-    <Page narrowWidth>
+      <Frame>
+          <Navigation location="/">
+              <Navigation.Section
+                  items={[
+                      {
+                          url: '/', // Update with your actual URL
+                          label: 'Home',
+                          icon: HomeMinor,
+                      },
+                      {
+                          url: '/page_builder', // Update with your actual URL
+                          label: 'Screen Builder',
+                          icon: MobileHamburgerMajor, // Choose an appropriate icon
+                      },
+                      {
+                          url: '/page_menu_buider', // Update with your actual URL
+                          label: 'Menu Builder',
+                          icon: CirclePlusOutlineMinor, // Choose an appropriate icon
+                      },
+                      {
+                          url: '/page_notification_list', // Update with your actual URL
+                          label: 'Notifications',
+                          icon: EditMinor, // Choose an appropriate icon
+                      },
+                      {
+                          url: '/page_app_submission_info', // Update with your actual URL
+                          label: 'App Submission',
+                          icon: EditMinor, // Choose an appropriate icon
+                      },
+                  ]}
+              />
+          </Navigation>
+    <Page >
       <TitleBar title={t("HomePage.title")} primaryAction={null} />
       <Layout>
         <Layout.Section>
@@ -51,6 +99,9 @@ export default function HomePage() {
                     <Button onClick={handleNavigation}>Start Page builder</Button> {/* Add this line */}
                     <Button onClick={handleNavigation2}>Sample Page builder</Button> {/* Add this line */}
                     <Button onClick={handleNavigation3}>Menu Builder</Button> {/* Add this line */}
+                    <Button onClick={handleNavigation4}>Noti Form</Button> {/* Add this line */}
+                    <Button onClick={handleNavigation5}> App submission </Button> {/* Add this line */}
+                    <Button onClick={handleNavigation6}> App NOti list </Button> {/* Add this line */}
 
                     <p>
                     <Trans
@@ -74,38 +125,20 @@ export default function HomePage() {
                       }}
                     />
                   </p>
-                  <p>{t("HomePage.startPopulatingYourApp")}</p>
-                  <p>
-                    <Trans
-                      i18nKey="HomePage.learnMore"
-                      components={{
-                        ShopifyTutorialLink: (
-                          <Link
-                            url="https://shopify.dev/apps/getting-started/add-functionality"
-                            external
-                          />
-                        ),
-                      }}
-                    />
-                  </p>
                 </TextContainer>
               </Stack.Item>
-              <Stack.Item>
-                <div style={{ padding: "0 20px" }}>
-                  <Image
-                    source={trophyImage}
-                    alt={t("HomePage.trophyAltText")}
-                    width={120}
-                  />
-                </div>
-              </Stack.Item>
+
             </Stack>
           </Card>
         </Layout.Section>
-        <Layout.Section>
+          <div style={{ display: 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+
+          <Layout.Section>
           <ProductsCard />
         </Layout.Section>
+          </div>
       </Layout>
     </Page>
+      </Frame>
   );
 }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidding Management</title>
+    <link rel="stylesheet" href="rules.css">
+</head>
+<body>
+<div id="bidding-strategy">
+    <h2>Select Bidding Strategy</h2>
+    <select id="strategy">
+        <option value="maximize-conversions">Maximize Conversions</option>
+        <option value="target-roas">Target ROAS</option>
+        <option value="target-cpa">Target CPA</option>
+        <option value="manual-cpc">Manual CPC</option>
+        <option value="enhanced-cpc">Enhanced CPC</option>
+        <option value="target-impression-share">Target Impression Share</option>
+        <option value="viewable-cpm">Viewable CPM</option>
+    </select>
+
+    <button onclick="applyStrategy()">Apply Strategy</button>
+</div>
+
+<div id="bidding-rules">
+    <h2>Create Bidding Rule</h2>
+    <input type="text" id="rule-name" placeholder="Rule Name">
+    <textarea id="rule-conditions" placeholder="Conditions"></textarea>
+    <textarea id="rule-actions" placeholder="Actions"></textarea>
+    <button onclick="createRule()">Create Rule</button>
+</div>
+
+
+<div id="recommendations">
+    <h2>Bidding Recommendations</h2>
+    <p id="recommendation-text">Recommendations will be shown here.</p>
+</div>
+
+<script src="rules.js"></script>
+</body>
+</html>

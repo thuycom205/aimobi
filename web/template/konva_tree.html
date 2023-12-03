@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/konva@9.2.3/konva.min.js"></script>
+
+</head>
+<body>
+<style>
+    #container {
+        width: 100%; /* or a fixed width */
+        height: 1500px; /* or a fixed height */
+        overflow: auto; /* Enables scrolling */
+    }
+    </style>
+
+
+<div>
+<div id="sidebar" style="position: absolute; z-index:1000;left: 0; top: 0; width: 200px; background: #f0f0f0; padding: 10px; display: none;">
+    <label for="numChildren">Number of children:</label>
+    <input type="text" id="numChildren">
+    <button  id="drawArrows"> Draw Arrows</button>
+    <button  id="drawArrows2"> Draw Arrows</button>
+    <button id="zoomInButton">Zoom In</button>
+    <button id="startGroupButton">Start Group</button>
+    <button id="stopGroupButton">Stop Group</button>
+
+    <button id="closeSidebar">Close</button>
+
+
+    <label for="labelInput">Label:</label>
+    <input type="text" id="labelInput">
+    <button  id="saveLabel"> Save</button>
+
+    <label for="labelSelect">Label:</label>
+    <select id="labelSelect">
+        <option value="1">1</option>
+        <option value="2">2</option>
+    </select>
+</div>
+
+<div id="container"></div>
+</div>
+<script src="konva_tree.js"></script>
+
+</body>
+</html>

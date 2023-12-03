@@ -189,7 +189,17 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
         // Replace with your actual URL structure
         return 'https://' + window.shop_name + `/${type}/${handle}`;
     };
+
+    const getResourcePickerType = () => {
+        return selectedItem.settings.action_type === 'collection' ? 'Collection' : 'Product';
+    };
+
+    const isMultipleSelectionAllowed = () => {
+        return selectedItem.settings.action_type === 'product';
+    };
     const renderResourceTable = (resources, type) => {
+        if (!resources || resources.length === 0) return null;
+
         return (
             <TableContainer component={Paper}>
                 <Table>
@@ -245,8 +255,10 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
                 onChange={handleActionTypeChange}
             />
             {(selectedItem.settings.action_type === 'collection' || selectedItem.settings.action_type === 'product') && (
+                <Box mt={2}>
                 <Button variant="contained" onClick={handleShowResourcePicker}>Browse</Button>
-            )}
+                </Box>
+                    )}
             {selectedItem.settings.action_type === 'web_url' && (
                 <TextField
                     label="Web URL"
@@ -258,8 +270,8 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
             )}
             {showResourcePicker && (
                 <ResourcePicker
-                    resourceType="Product"
-                    showVariants={false}
+                    resourceType={getResourcePickerType()}
+                    allowMultiple={isMultipleSelectionAllowed()}
                     open={showResourcePicker}
                     onSelection={handleResourceSelection}
                     onCancel={() => setShowResourcePicker(false)}
@@ -267,7 +279,9 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
             )}
             {localSettings.collection_action && renderResourceTable(localSettings.collection_action, 'collections')}
             {localSettings.product_action && renderResourceTable(localSettings.product_action, 'products')}
+            <Box mt={2}>
             <Button variant="contained" onClick={closePanel}>Close</Button>
+            </Box>
         </Box>
     );
 };

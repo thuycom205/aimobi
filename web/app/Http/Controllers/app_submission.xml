@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table name="app_submission">
+    <column name="id" type="bigint" required="true" auto_increment="true" primary_key="true"/>
+    <column name="shop_name" type="varchar(255)" required="true"/>
+    <column name="phone" type="varchar(20)" required="false" default="null"/>
+    <column name="email" type="varchar(255)" required="false" default="null"/>
+    <column name="app_name" type="varchar(255)" required="true"/>
+    <column name="splash_screen_img" type="varchar(2083)" required="false" default="null"/>
+    <column name="icon_url" type="varchar(255)" required="false" default="null"/>
+    <column name="firebase_information" type="json" required="false" default="null"/>
+    <column name="app_submission_status" type="enum('pending', 'submitted', 'in review', 'released')" required="true" default="pending"/>
+    <column name="app_version" type="varchar(255)" required="true"/>
+    <column name="created_at" type="timestamp" required="false" default="null"/>
+    <column name="updated_at" type="timestamp" required="false" default="null"/>
+</table>

@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+nav ul li {
+    float: left;
+}
+
+nav ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    background-color: #111;
+}
+
+#campaigns, #analytics, #settings {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+#campaigns-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#campaigns-table, #campaigns-table th, #campaigns-table td {
+    border: 1px solid #ddd;
+}
+
+#campaigns-table th, #campaigns-table td {
+    padding: 8px;
+    text-align: left;
+}
+
+#campaigns-table th {
+    background-color: #f2f2f2;
+}
+#analytics canvas {
+    max-width: 400px;
+    margin-bottom: 30px;
+}
+#settings {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+#settings-form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+#settings-form label {
+    margin-bottom: 5px;
+}
+
+#settings-form input, #settings-form select {
+    margin-bottom: 20px;
+}

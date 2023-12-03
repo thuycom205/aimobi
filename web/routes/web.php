@@ -20,6 +20,8 @@ use Shopify\Webhooks\Registry;
 use Shopify\Webhooks\Topics;
 use App\Http\Controllers\MobileScreenController;
 use App\Http\Controllers\MobileMenuController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\AppSubmissionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -151,5 +153,14 @@ Route::post('/api/screen_mobile/save', [MobileScreenController::class, 'save']);
 
 Route::get('/api/mobile_menu/fetch', [MobileMenuController::class, 'fetch']);
 Route::post('/api/mobile_menu/save', [MobileMenuController::class, 'save']);
+
+Route::post('/api/mobile_notification/save', [NotificationController::class, 'save']);
+Route::get('/api/mobile_notification/fetch', [NotificationController::class, 'fetch']);
+Route::post('/api/mobile_notification/fetchList', [NotificationController::class, 'fetchList']);
+
+
+Route::post('/api/mobile_submission/save', [AppSubmissionController::class, 'save']);
+Route::get('/api/mobile_submission/fetch', [AppSubmissionController::class, 'fetch']);
+Route::post('/api/mobile_submission/fetchList', [AppSubmissionController::class, 'fetchList']);
 
 

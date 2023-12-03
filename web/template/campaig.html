@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Management Dashboard</title>
+    <link rel="stylesheet" href="campaign.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+<header>
+    <h1>Campaign Management Dashboard</h1>
+</header>
+<nav>
+    <ul>
+        <li><a href="#campaigns">Campaigns</a></li>
+        <li><a href="#analytics">Analytics</a></li>
+        <li><a href="#settings">Settings</a></li>
+    </ul>
+</nav>
+<div id="campaigns">
+        <h2>Current Campaigns</h2>
+        <table id="campaigns-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Budget</th>
+                <th>Spent</th>
+                <th>Clicks</th>
+                <th>Impressions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Campaign data rows will be inserted here -->
+            </tbody>
+        </table>
+</div>
+<div id="campaignsContainer">
+
+</div>
+<div id="analytics">
+    <h2>Campaign Analytics</h2>
+    <canvas id="clicksChart"></canvas>
+    <canvas id="impressionsChart"></canvas>
+</div>
+
+<div id="settings">
+    <h2>Settings</h2>
+    <form id="settings-form">
+        <label for="notification">Enable Notifications:</label>
+        <input type="checkbox" id="notification" name="notification"><br><br>
+
+        <label for="timezone">Timezone:</label>
+        <select id="timezone" name="timezone">
+            <option value="GMT">GMT</option>
+            <option value="EST">EST</option>
+            <option value="PST">PST</option>
+        </select><br><br>
+
+        <input type="submit" value="Save Changes">
+    </form>
+</div>
+
+<script src="campaign.js"></script>
+</body>
+</html>

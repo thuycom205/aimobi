@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<table name="notifications">
+    <column name="id" type="bigint" required="true" auto_increment="true" primary_key="true"/>
+    <column name="shop_name" type="varchar(255)" required="true" default="Default Shop Name"/>
+    <column name="type" type="varchar(255)" required="true" default="Default Type"/>
+    <column name="title" type="varchar(255)" required="true" default="Default Title"/>
+    <column name="content" type="text" required="true" default="Default Content"/>
+    <column name="send_time_type" type="enum('immediate','scheduled')" required="true" default="immediate"/>
+    <column name="scheduled_send_time" type="datetime" default="2023-01-01 00:00:00"/>
+    <column name="rich_media" type="json" default='{"key": "value"}'/>
+    <column name="img_url" type="varchar(2083)" default="https://example.com/default-image.jpg"/>
+    <column name="status" type="enum('pending','processed','sent','archived','scheduled')" required="true" default="pending"/>
+    <column name="created_at" type="timestamp" />
+    <column name="updated_at" type="timestamp" />
+</table>
