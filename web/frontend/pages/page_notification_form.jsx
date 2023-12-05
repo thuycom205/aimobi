@@ -87,7 +87,7 @@ function MyComponent() {
                         title="Notice"
                         onDismiss={handleDismissBanner}
                     >
-                        <p>This is a simple banner with some instructions for the user.</p>
+                        <p>Effortlessly set up and personalize notifications in a tree view layout to keep your customers informed about the latest products, special offers, and other vital updates.</p>
                     </Banner>
                         </div>
                 )}

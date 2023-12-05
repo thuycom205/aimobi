@@ -290,6 +290,7 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
 
 function App() {
     const navigate = useNavigate();
+    const [showToast, setShowToast] = useState(false);
 
     const [screenId, setScreenId] = useState(0);
     const [screenTitle, setScreenTitle] = useState('Home');
@@ -431,6 +432,10 @@ function App() {
             // Handle the response
             const data = await response.json();
             console.log('Submission successful:', data);
+            setShowToast(true);
+
+            // Reset toast after a delay (optional)
+            setTimeout(() => setShowToast(false), 5000);
         } catch (error) {
             console.error('Submission failed:', error);
         }
@@ -538,6 +543,8 @@ function App() {
 
     return (
         <Frame   topBar={topBarMarkup}>
+            {showToast && <Toast content="Form submitted successfully" onDismiss={() => setShowToast(false)} />}
+
             <Page fullWidth title="Page Builder"
                   primaryAction={{
                       content: 'Save',

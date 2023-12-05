@@ -1,6 +1,6 @@
 
 import React, { useState,useEffect, useCallback } from 'react';
-import { Frame, Page, Layout, Card, FormLayout, TextField, Button,LegacyCard } from '@shopify/polaris';
+import { Frame, Page, Layout, Card, FormLayout, TextField, Button,LegacyCard ,Toast} from '@shopify/polaris';
 import {useNavigate} from 'react-router-dom';
 
 const MyComponent = () => {
@@ -24,6 +24,7 @@ const MyComponent = () => {
     const [updated_at, setUpdated_at] = useState('');
 
     const navigate = useNavigate();
+    const [showToast, setShowToast] = useState(false);
 
     const validatePhone = (phone) => {
         if (!phone || isNaN(Number(phone))) return 'This field must be a number';
@@ -54,6 +55,7 @@ const MyComponent = () => {
         if (!app_version) return 'This field is required';
         return '';
     };
+    const toggleToast = useCallback(() => setShowToast((showToast) => !showToast), []);
 
 
 
@@ -118,6 +120,8 @@ const MyComponent = () => {
             body: JSON.stringify(payload)
         })
             .then(response => {
+                setShowToast(true); // Show toast message
+
                 // ... response handling
             })
             .catch(error => {
@@ -126,6 +130,9 @@ const MyComponent = () => {
     }, [id, shop_name, phone, email, app_name, splash_screen_img, icon_url, firebase_information, app_submission_status, app_version, created_at, updated_at, ]);
     return (
         <Frame>
+            {showToast && (
+                <Toast content="Form submitted successfully" onDismiss={toggleToast} />
+            )}
             <Page fullWidth
                   primaryAction={{
                       content: 'Submit',

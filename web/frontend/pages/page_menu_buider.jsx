@@ -213,6 +213,8 @@ const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
 };
 
 function App() {
+    const [showToast, setShowToast] = useState(false);
+
     const [menuId, setMenuId] = useState(0);
     const [menuTitle, setMenuTitle] = useState('Untitled');
     const [menuType, setMenuType] = useState('drawer');
@@ -289,6 +291,8 @@ function App() {
 
             const data = await response.json();
             console.log('Menu saved successfully:', data);
+            setShowToast(true);
+
             // Optionally, show a success message to the user
         } catch (error) {
             console.error('Failed to save menu:', error);
@@ -339,6 +343,9 @@ function App() {
 
     return (
         <Frame>
+            {showToast && (
+                <Toast content="Form submitted successfully" onDismiss={() => setShowToast(false)} />
+            )}
             <Page fullWidth title="Page Builder"
                   primaryAction={{
                       content: 'Save',

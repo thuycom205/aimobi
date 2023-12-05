@@ -191,18 +191,25 @@ const ListPage = ({ title, resourceName, fetchUrl, deleteUrl, createUrl, editUrl
                                 name={title}
                                 persistActions
                                 shortcutActions={[
-
                                     { content: 'Edit', onAction: () => handleEdit(id) }
                                 ]}
                             >
-                                <div style={{ width: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-
-                                <TextStyle variation="strong">{title}</TextStyle>
-                                <Badge {...badgeProps} />
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'flex-start',
+                                    width: '150px',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                }}>
+                                    <TextStyle variation="strong">{title}</TextStyle>
+                                    <Badge {...badgeProps} style={{ marginTop: '4px' }} />
                                 </div>
-
                             </ResourceItem>
                         );
+
                     }}
                 />
             );
