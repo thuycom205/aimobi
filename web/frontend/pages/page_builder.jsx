@@ -43,6 +43,7 @@ import {Page} from '@shopify/polaris';
 import Screen from './page_builder_sample.jsx';
 import { ResourcePicker } from '@shopify/app-bridge-react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,Link } from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 
 const ITEM_TYPE = 'ITEM';
 const carouselItems = [
@@ -288,6 +289,8 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
 
 
 function App() {
+    const navigate = useNavigate();
+
     const [screenId, setScreenId] = useState(0);
     const [screenTitle, setScreenTitle] = useState('Home');
     const [pageType, setPageType] = useState('home');
@@ -314,14 +317,16 @@ function App() {
         <TopBar.UserMenu
             actions={[
                 {
-                    items: [{content: 'Home'}],
+                    items: [
+                        {content: 'Home',
+                            onAction: () => {
+                                navigate('/'); // Close the modal after adding the element
+                                // handleAddElement(optionTypeSelected);
+                                // toggleModal(); // Close the modal after adding the element
+                            }
+                    }],
                 },
-                {
-                    items: [{content: 'Page Builder'}],
-                },
-                {
-                    items: [{content: 'Menu Builder'}],
-                },
+
                 // ... Add more sections here
             ]}
             name="Mobile App builder"
@@ -543,6 +548,7 @@ function App() {
                     secondaryActions={[
                         {   content: 'Back to Home',
                             onAction: () => {
+                            navigate('/') // Close the modal after adding the element
                                // handleAddElement(optionTypeSelected);
                                // toggleModal(); // Close the modal after adding the element
                             },

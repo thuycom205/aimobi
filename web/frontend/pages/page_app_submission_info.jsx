@@ -1,6 +1,7 @@
 
 import React, { useState,useEffect, useCallback } from 'react';
-import { Frame, Page, Layout, Card, FormLayout, TextField, Button } from '@shopify/polaris';
+import { Frame, Page, Layout, Card, FormLayout, TextField, Button,LegacyCard } from '@shopify/polaris';
+import {useNavigate} from 'react-router-dom';
 
 const MyComponent = () => {
     const [id, setId] = useState('');
@@ -22,6 +23,7 @@ const MyComponent = () => {
     const [created_at, setCreated_at] = useState('');
     const [updated_at, setUpdated_at] = useState('');
 
+    const navigate = useNavigate();
 
     const validatePhone = (phone) => {
         if (!phone || isNaN(Number(phone))) return 'This field must be a number';
@@ -124,25 +126,84 @@ const MyComponent = () => {
     }, [id, shop_name, phone, email, app_name, splash_screen_img, icon_url, firebase_information, app_submission_status, app_version, created_at, updated_at, ]);
     return (
         <Frame>
-            <Page fullWidth>
+            <Page fullWidth
+                  primaryAction={{
+                      content: 'Submit',
+                      onAction: () => {
+                          handleSubmit() // Close the modal after adding the element
+                      },
+                  }}
+                  secondaryActions={[
+                      {   content: 'Back to Home',
+                          onAction: () => {
+                          navigate('/'); // Close the modal after adding the element
+                              // handleAddElement(optionTypeSelected);
+                              // toggleModal(); // Close the modal after adding the element
+                          },
+                      },
+                  ]}
+            >
                 <Layout>
+                    <Layout.Section oneThird>
+
+                        <div style={{marginTop: 'var(--p-space-500)'}}>
+                            <div className="guide-container">
+                                <p>Follow these simple steps to submit your app information:</p>
+                                <div className="guide-step">
+                                    <span className="guide-title">Shop Name:</span> Enter your shop's name as it will
+                                    appear in the app.
+                                </div>
+                                <div className="guide-step">
+                                    <span className="guide-title">Contact Details:</span> Provide a phone number and
+                                    email address for app-related communication.
+                                </div>
+                                <div className="guide-step">
+                                    <span className="guide-title">App Name:</span> Choose a unique name for your app,
+                                    reflecting its purpose.
+                                </div>
+                                <div className="guide-step">
+                                    <span className="guide-title">Images:</span> Provide URLs for your app’s splash
+                                    screen image and icon. Ensure these images are high-quality and represent your brand
+                                    effectively.
+                                </div>
+                                <div className="guide-step">
+                                    <span className="guide-title">Firebase Information:</span> If you're using Firebase,
+                                    include necessary details here. Otherwise, leave it as 'na'.
+                                </div>
+                                <div className="guide-step">
+                                    <span className="guide-title">App Version:</span> Indicate the version of your app,
+                                    starting with '1.0.0' for new apps.
+                                </div>
+                                <div className="guide-step">
+                                    <span className="guide-title">Submission:</span> Review all information for
+                                    accuracy, then click 'Submit'.
+                                </div>
+                            </div>
+                        </div>
+                    </Layout.Section>
                     <Layout.Section>
+
                         <Card sectioned>
                             <FormLayout>
+                                <div style={{
+                                    display: 'none',
+                                }}>
                                 <TextField label="Id" value={id} onChange={(value) => setId(value)} type="field_text" />
                                 <TextField label="Shop_name" value={shop_name} onChange={(value) => setShop_name(value)} type="field_text" />
+                                    <TextField label="Created_at" value={created_at} onChange={(value) => setCreated_at(value)} type="field_text" />
+                                    <TextField label="Updated_at" value={updated_at} onChange={(value) => setUpdated_at(value)} type="field_text" />
+                                    <TextField label="App_submission_status" value={app_submission_status} onChange={(value) => setApp_submission_status(value)} type="select" />
+                                    <TextField label="App_version" value={app_version} onChange={(value) => setApp_version(value)} error={app_versionError} type="field_text" />
+
+                                </div>
                                 <TextField label="Phone" value={phone} onChange={(value) => setPhone(value)} error={phoneError} type="field_text" />
                                 <TextField label="Email" value={email} onChange={(value) => setEmail(value)} error={emailError} type="field_text" />
-                                <TextField label="App_name" value={app_name} onChange={(value) => setApp_name(value)} error={app_nameError} type="field_text" />
-                                <TextField label="Splash_screen_img" value={splash_screen_img} onChange={(value) => setSplash_screen_img(value)} error={splash_screen_imgError} type="field_text" />
-                                <TextField label="Icon_url" value={icon_url} onChange={(value) => setIcon_url(value)} error={icon_urlError} type="field_text" />
-                                <TextField label="Firebase_information" value={firebase_information} onChange={(value) => setFirebase_information(value)} type="textarea" />
-                                <TextField label="App_submission_status" value={app_submission_status} onChange={(value) => setApp_submission_status(value)} type="select" />
-                                <TextField label="App_version" value={app_version} onChange={(value) => setApp_version(value)} error={app_versionError} type="field_text" />
-                                <TextField label="Created_at" value={created_at} onChange={(value) => setCreated_at(value)} type="field_text" />
-                                <TextField label="Updated_at" value={updated_at} onChange={(value) => setUpdated_at(value)} type="field_text" />
+                                <TextField label="App name" value={app_name} onChange={(value) => setApp_name(value)} error={app_nameError} type="field_text" />
+                                <TextField label="Splash screen Image Url" value={splash_screen_img} onChange={(value) => setSplash_screen_img(value)} error={splash_screen_imgError} type="field_text" />
+                                <TextField label="Icon url" value={icon_url} onChange={(value) => setIcon_url(value)} error={icon_urlError} type="field_text" />
+                                <TextField label="Firebase information" value={firebase_information} onChange={(value) => setFirebase_information(value)} type="textarea" />
 
-                                <Button onClick={handleSubmit}>Submit</Button>
+                                {/*<Button onClick={handleSubmit}>Submit</Button>*/}
                             </FormLayout>
                         </Card>
                     </Layout.Section>

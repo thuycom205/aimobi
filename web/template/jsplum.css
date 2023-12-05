@@ -1,0 +1,40 @@
+#sidebar {
+    display: none; /* Initially hidden, can be toggled via JavaScript */
+    position: fixed; /* Sidebar position fixed to the screen */
+    left: 0; /* Align to the left */
+    top: 0; /* Align to the top */
+    width: 250px; /* Width of the sidebar */
+    height: 100vh; /* Full height of the viewport */
+    background-color: #f9f9f9; /* Light grey background */
+    padding: 20px; /* Padding inside the sidebar */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Shadow effect */
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    z-index: 100; /* Ensure sidebar is above other content */
+}
+
+#sidebar input[type="text"], #sidebar input[type="number"], #sidebar select {
+    width: 100%; /* Full width inside the sidebar */
+    padding: 10px; /* Padding for inputs and select */
+    margin-bottom: 10px; /* Space between elements */
+    box-sizing: border-box; /* Include padding and border in element's width */
+}
+
+#sidebar button {
+    width: 100%; /* Full width buttons */
+    padding: 10px 0; /* Padding top and bottom */
+    margin-bottom: 10px; /* Space between buttons */
+    background-color: #007bff; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+#sidebar button:hover {
+    background-color: #0056b3; /* Darker background on hover */
+}
+
+#selected-field-label {
+    margin-bottom: 20px; /* Space below the label */
+    font-weight: bold; /* Bold font for emphasis */
+}

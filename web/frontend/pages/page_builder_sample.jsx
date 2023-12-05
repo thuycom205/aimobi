@@ -12,7 +12,12 @@ import SwipeableCircleComponent from '../components/SwipeableCircleComponent/Swi
 import SwipeableProductsComponent from '../components/SwipeableProductsComponent/SwipeableProductsComponent';
 import ProductGridComponent from '../components/ProductGridComponent/ProductGridComponent';
 import VideoComponent from '../components/VideoComponent/VideoComponent';
-
+import  DividerComponent from '../components/DividerComponent/DividerComponent';
+import RecentViewed from "../components/RecentViewed/RecentViewed.jsx";
+import ImageComponent from "../components/ImageComponent/ImageComponent.jsx";
+import AestheticDiscount   from "../components/AestheticDiscount/AestheticDiscount.jsx";
+import LoyaltyProgram from "../components/LoyaltyProgram/LoyaltyProgram.jsx";
+import TitleComponent    from "../components/TitleComponent/TitleComponent.jsx";
 const sampleProducts = [
     // Add URLs to your product images here
     {
@@ -80,6 +85,18 @@ const Screen = ({items}) => {
             // Map over items and render based on the item type
             return items.map((item, index) => {
                 switch (item.type) {
+                    case 'title':
+                        return <TitleComponent key={index} settings={item.settings} />;
+                    case 'loyalty':
+                        return <LoyaltyProgram key={index} settings={item.settings} />;
+                    case 'discount':
+                        return <AestheticDiscount key={index} settings={item.settings} />;
+                    case 'divider':
+                        return <DividerComponent key={index} settings={item.settings} />;
+                    case 'image':
+                        return <ImageComponent key={index} settings={item.settings} />;
+                    case 'recent_viewed':
+                        return <RecentViewed key={index} settings={item.settings} />;
                     case 'countdown':
                         return <CountdownComponent key={index} settings={item.settings} />;
                     case 'circle_collection':

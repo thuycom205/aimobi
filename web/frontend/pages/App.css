@@ -81,3 +81,38 @@
     background-color: #ffffff;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
+/* In your CSS file */
+/* In your CSS file */
+.navigationSidebar {
+    float: left; /* Floats the sidebar to the left */
+    width: 250px; /* Set the width of the sidebar */
+    height: 100vh; /* Full height of the viewport */
+    /* Additional styling as needed */
+}
+
+.mainContent {
+    float: right; /* Floats the content to the right */
+    width: calc(100% - 250px); /* Full width minus the sidebar width */
+    /*max-width: 800px; !* Optional: Set a maximum width for the content area *!*/
+    /* Additional styling as needed */
+}
+
+/* Clearfix to ensure container encompasses floated elements */
+.layoutWrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.guide-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+.guide-step {
+    margin-bottom: 15px;
+}
+.guide-title {
+    font-weight: bold;
+}

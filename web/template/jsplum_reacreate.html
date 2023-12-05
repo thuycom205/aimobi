@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
+
+</head>
+<body>
+<style>
+    #jsplumb-container {
+        position: relative;
+        min-height:1000px;
+    }
+    .quiz-option {
+        position: absolute;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }
+    .select-circle {
+        width: 15px;
+        height: 15px;
+        background-color: blue;
+        border-radius: 50%;
+        display: inline-block;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    #option-1 {
+        position: absolute;
+        left: 600px; /* Left of screen */
+        top: 50px; /* Positioned 50px from the top of the screen */
+
+        /*top: 50%; !* Middle of screen vertically *!*/
+        /*transform: translateY(-50%); !* Adjust for the height of the element *!*/
+        /* Other styles */
+    }
+    #jsplumb-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        cursor: grab; /* Cursor is a grabbing hand */
+    }
+    #jsplumb-container.grabbing {
+        cursor: grabbing; /* Cursor when actually dragging */
+    }
+    #sidebar {
+        position: fixed; /* Or absolute, depending on your needs */
+        width: 200px; /* Adjust as needed */
+        top: 0;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto; /* For scrollable sidebar content */
+        background-color: #f0f0f0; /* Just for visibility */
+        z-index: 1000; /* Ensures the sidebar is above the canvas */
+    }
+    #jsplumb-container {
+        margin-left: 200px; /* Adjust based on the sidebar width */
+        height: 90% !important;
+        /*min-height: 1000px; !* Minimum height *!*/
+        /* Full height of the viewport */
+        overflow: auto; /* If you want scrolling within the canvas */
+    }
+    /* Additional styles for sidebar, etc. */
+</style>
+<div id="sidebar" style="display:none;">
+    <input type="number" id="number-input" min="1" max="10">
+    <button id="add-options">Add Options</button>
+    <select id="element-type">
+        <option value="text">Text</option>
+        <option value="checkbox">Checkbox</option>
+        <option value="select">Select</option>
+        <option value="radio">Radio</option>
+    </select>
+
+    <!-- Textbox for Title -->
+    <input type="text" id="title" placeholder="Enter title" />
+    <select id="field-selector">
+        <option value="field1">What is your action</option>
+        <option value="field2">What is your condition</option>
+        <!-- Add other fields as needed -->
+    </select>
+    <button id="match-field-btn">Match with Field</button>
+    <div id="selected-field-label">What is your skin type?</div>
+    <!-- Buttons -->
+    <button id="change-title-btn">Change Title</button>
+    <button id="connect-btn">Connect to Destination</button>
+    <button id="add-new-element">Add new element</button>
+    <button id="sumbit">Submit</button>
+</div>
+<div id="jsplumb-container">
+    <div class="quiz-option" id="option-1" data-type="start">
+        Option 1
+        <div class="select-circle" data-option="1"></div>
+    </div>
+    <!-- Repeat for other options -->
+</div>
+
+
+<script type="text/javascript">
+var raw = '{"nodes":[{"id":"option-1","type":"start","position":{"x":600,"y":50}},{"id":"option-2","type":"select","position":{"x":276,"y":235},"name":"unnamed","label":"What is your action"},{"id":"option-3","type":"select","position":{"x":833,"y":199},"name":"unnamed","label":"What is your condition"},{"id":"child-node-opt1","type":"option","position":{"x":534,"y":457},"name":"opt1","label":"Option 1"},{"id":"child-node-opt2","type":"option","position":{"x":-27,"y":348},"name":"opt2","label":"Option 2"},{"id":"child-node-optA","type":"option","position":{"x":1428,"y":489},"name":"optA","label":"Option A"},{"id":"child-node-optB","type":"option","position":{"x":723,"y":453},"name":"optB","label":"Option B"}],"connections":[{"sourceId":"option-1","targetId":"option-2"},{"sourceId":"option-1","targetId":"option-3"},{"sourceId":"option-2","targetId":"child-node-opt1"},{"sourceId":"option-2","targetId":"child-node-opt2"},{"sourceId":"option-3","targetId":"child-node-optA"},{"sourceId":"option-3","targetId":"child-node-optB"}]}';
+var data = JSON.parse(raw);
+data.nodes.forEach(function(node) {
+    var nodeElement = document.createElement('div');
+    nodeElement.id = node.id;
+    nodeElement.className = 'quiz-option';
+    nodeElement.style.position = 'absolute';
+    nodeElement.style.left = node.position.x + 'px';
+    nodeElement.style.top = node.position.y + 'px';
+    nodeElement.innerHTML = node.label +  '<div class="select-circle" data-option="' + node.id + '"></div>';; // Or any other content based on 'type'
+
+    document.getElementById('jsplumb-container').appendChild(nodeElement);
+});
+jsPlumb.ready(function() {
+    data.connections.forEach(function(connection) {
+        jsPlumb.connect({
+            source: connection.sourceId,
+            target: connection.targetId,
+            anchors: ["AutoDefault", "AutoDefault"],
+            connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true }],
+            paintStyle: { stroke: "#5c96bc", strokeWidth: 2 },
+            endpoint: "Blank",
+            overlays: [
+                ["Arrow", { width: 12, length: 12, location: 1 }]
+            ]
+            // Add your preferred connector style
+        });
+    });
+});
+
+
+var rawData = '{"nodes":[{"id":"option-1","type":"start","position":{"x":600,"y":50}},{"id":"option-2","type":"select","position":{"x":276,"y":235},"name":"unnamed","label":"What is your action"},{"id":"option-3","type":"select","position":{"x":833,"y":199},"name":"unnamed","label":"What is your condition"},{"id":"child-node-opt1","type":"option","position":{"x":534,"y":457},"name":"opt1","label":"Option 1"},{"id":"child-node-opt2","type":"option","position":{"x":-27,"y":348},"name":"opt2","label":"Option 2"},{"id":"child-node-optA","type":"option","position":{"x":1428,"y":489},"name":"optA","label":"Option A"},{"id":"child-node-optB","type":"option","position":{"x":723,"y":453},"name":"optB","label":"Option B"}],"connections":[{"sourceId":"option-1","targetId":"option-2"},{"sourceId":"option-1","targetId":"option-3"},{"sourceId":"option-2","targetId":"child-node-opt1"},{"sourceId":"option-2","targetId":"child-node-opt2"},{"sourceId":"option-3","targetId":"child-node-optA"},{"sourceId":"option-3","targetId":"child-node-optB"}]}';
+var data = JSON.parse(rawData);
+
+var nodesMap = {};
+data.nodes.forEach(node => {
+    nodesMap[node.id] = {
+        label: node.label || node.name,
+        type: node.type,
+        id: node.id,
+        children: []
+    };
+});
+
+data.connections.forEach(connection => {
+    var parent = nodesMap[connection.sourceId];
+    var child = nodesMap[connection.targetId];
+    if (parent && child) {
+        parent.children.push(child);
+    }
+});
+
+// Assuming 'option-1' is the root node
+var treeStructure = nodesMap['option-1'];
+console.log(treeStructure);
+
+</script>
+</body>
+</html>

@@ -28,6 +28,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {Page,Frame,Toast,Tooltip} from '@shopify/polaris';
 import { ResourcePicker } from '@shopify/app-bridge-react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,Link,Paper } from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 
 const ITEM_TYPE = 'MENU_ITEM';
 const menuTypeIcons = {
@@ -334,6 +335,7 @@ function App() {
             fetchMenuData(0);
         }
     }, []);
+    const navigate = useNavigate();
 
     return (
         <Frame>
@@ -347,6 +349,7 @@ function App() {
                   secondaryActions={[
                       {   content: 'Back to Home',
                           onAction: () => {
+                          navigate('/') // Close the modal after adding the element
                               // handleAddElement(optionTypeSelected);
                               // toggleModal(); // Close the modal after adding the element
                           },

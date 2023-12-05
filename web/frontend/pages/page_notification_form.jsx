@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Frame, Page, Layout, Card, FormLayout, TextField, TextContainer, Banner, Toast ,Button} from '@shopify/polaris';
+import {useNavigate} from 'react-router-dom';
 
 function MyComponent() {
     const [id, setId] = useState(0);
@@ -57,6 +58,7 @@ function MyComponent() {
     const handleDismissBanner = useCallback(() => {
         setShowBanner(false);
     }, []);
+    const navigate = useNavigate();
 
     return (
         <Frame>
@@ -67,8 +69,17 @@ function MyComponent() {
                         handleSubmit() // Close the modal after adding the element
                     },
                 }
-
-            }>
+            }
+                  secondaryActions={[
+                      {   content: 'Back to Home',
+                          onAction: () => {
+                              navigate('/') // Close the modal after adding the element
+                              // handleAddElement(optionTypeSelected);
+                              // toggleModal(); // Close the modal after adding the element
+                          },
+                      },
+                  ]}
+            >
                 {showBanner && (
                     <div style={{ marginTop: '20px', marginBottom: '20px' }}>
 

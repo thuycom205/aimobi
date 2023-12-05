@@ -1,32 +1,45 @@
-stage.on('mousedown', function(e) {
-    if (!selectionModeEnabled) {
-        return;
-    }
-    // Start a timer when the mouse is held down
-    mouseDownTimer = setTimeout(function() {
-        isDrawing = true;
+import React from 'react';
+import { Page, Card, Button, TextContainer } from '@shopify/polaris';
 
-        // Start point of the rectangle
-        x1 = stage.getPointerPosition().x;
-        y1 = stage.getPointerPosition().y;
-        selectionRectangle.visible(true);
-        selectionRectangle.width(0);
-        selectionRectangle.height(0);
-    }, 300); // 300 milliseconds = 0.3 seconds
-});
+export default function GuidePage() {
+    const navigateTo = (route) => {
+        // Implement navigation logic here. For example:
+        // navigate(route);
+    };
 
-stage.on('mousemove', function(e) {
-    if (!isDrawing || !selectionModeEnabled) {
-        return;
-    }
-    // Existing mousemove logic
-});
+    return (
+        <>
+            <Card sectioned>
+                <TextContainer>
+                    <h2>Create Screens</h2>
+                    <p>Use the drag-and-drop interface to design the screens of your app. You can choose from a variety of templates or start from scratch. Add elements like images, text, buttons, and more by simply dragging them onto your screen layout.</p>
+                    <Button onClick={() => navigateTo('/screen-builder')}>Start Creating Screens</Button>
+                </TextContainer>
+            </Card>
 
-stage.on('mouseup', function() {
-    if (!selectionModeEnabled) {
-        return;
-    }
-    // Existing mouseup logic
-    // Optionally, disable selection mode after selection is made
-    // selectionModeEnabled = false;
-});
+            <Card sectioned>
+                <TextContainer>
+                    <h2>Design Menus</h2>
+                    <p>Similarly, you can create menus for your app. Drag and drop different menu items into your desired order, and customize their appearance to match your brand.</p>
+                    <Button onClick={() => navigateTo('/menu-designer')}>Start Designing Menus</Button>
+                </TextContainer>
+            </Card>
+
+            <Card sectioned>
+                <TextContainer>
+                    <h2>Create and Manage Notifications</h2>
+                    <p>Effortlessly set up and personalize notifications in a tree view layout to keep your customers informed about the latest products, special offers, and other vital updates.</p>
+                    <Button onClick={() => navigateTo('/notification-manager')}>Manage Notifications</Button>
+                </TextContainer>
+            </Card>
+
+            <Card sectioned>
+                <TextContainer>
+                    <h2>App Submission Assistance</h2>
+                    <p>After finalizing your app, you have the option to submit it to the Apple App Store and Google Play Store. Our drag-and-drop app builder service includes personalized assistance. Once you're ready to proceed, contact us and we'll guide you through the app submission process for a seamless experience.</p>
+                    <Button onClick={() => navigateTo('/app-submission')}>Get Submission Assistance</Button>
+                </TextContainer>
+            </Card>
+        </>
+    );
+}

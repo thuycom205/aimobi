@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
+
+</head>
+<body>
+<style>
+    #jsplumb-container {
+        position: relative;
+        min-height: 500px;
+    }
+    .quiz-option {
+        position: absolute;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }
+    .select-circle {
+        width: 15px;
+        height: 15px;
+        background-color: blue;
+        border-radius: 50%;
+        display: inline-block;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    #option-1 {
+        position: absolute;
+        left: 600px; /* Left of screen */
+        top: 50%; /* Middle of screen vertically */
+        transform: translateY(-50%); /* Adjust for the height of the element */
+        /* Other styles */
+    }
+    /* Additional styles for sidebar, etc. */
+</style>
+
+<div id="jsplumb-container">
+    <div class="quiz-option" id="option-1">
+        Option 1
+        <div class="select-circle" data-option="1"></div>
+    </div>
+    <!-- Repeat for other options -->
+</div>
+
+<div id="sidebar" style="display:none;">
+    <input type="number" id="number-input" min="1" max="10">
+    <button id="add-options">Add Options</button>
+</div>
+<script>
+    var selectedOption = null;
+    jsPlumb.ready(function () {
+        var instance = jsPlumb.getInstance({
+            // jsPlumb settings
+            Container: "jsplumb-container"
+        });
+
+        // Make options draggable
+        var quizOptions = document.querySelectorAll('.quiz-option');
+        quizOptions.forEach(function(option) {
+            instance.draggable(option.id);
+        });
+
+        // Handle circle click
+        document.querySelectorAll('.select-circle').forEach(function(circle) {
+            circle.addEventListener('click', function() {
+                selectedOption = this.getAttribute('data-option');
+                document.getElementById('sidebar').style.display = 'block';
+            });
+        });
+
+        // Handle adding new options
+        document.getElementById('add-options').addEventListener('click', function() {
+            var num = parseInt(document.getElementById('number-input').value || 0);
+            addNewOptions(num, selectedOption);
+        });
+    });
+    function addNewOptionsx(num, parentOptionId) {
+        if (!num || !parentOptionId) return;
+
+        var parentOption = document.getElementById('option-' + parentOptionId);
+        var parentPos = parentOption.getBoundingClientRect();
+        var radius = 100; // Distance from the parent option
+        var angleStep = 360 / num;
+
+        for (var i = 0; i < num; i++) {
+            var angle = angleStep * i;
+            var x = parentPos.left + radius * Math.cos(angle * Math.PI / 180);
+            var y = parentPos.top + radius * Math.sin(angle * Math.PI / 180);
+
+            var newOption = document.createElement('div');
+            newOption.className = 'quiz-option';
+            var nextOptionId = document.querySelectorAll('.quiz-option').length + 1;
+            newOption.id = 'option-' + nextOptionId;
+            newOption.innerHTML = 'Option ' + nextOptionId + '<div class="select-circle" data-option="' + nextOptionId + '"></div>';
+            newOption.style.left = x + 'px';
+            newOption.style.top = y + 'px';
+
+            document.getElementById('jsplumb-container').appendChild(newOption);
+
+            // Make the new option draggable
+            jsPlumb.draggable(newOption.id, {
+                drag: function(event) {
+                    // Repaints connections on drag
+                    jsPlumb.repaint(newOption.id);
+                }
+            });
+
+            // Connect new option to parent option with jsPlumb
+            jsPlumb.connect({
+                source: parentOption.id,
+                target: newOption.id,
+                anchors: ["AutoDefault", "AutoDefault"],
+                connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true }],
+                paintStyle: { stroke: "#5c96bc", strokeWidth: 2 },
+                endpoint: "Blank",
+                overlays: [
+                    ["Arrow", { width: 12, length: 12, location: 1 }]
+                ]
+            });
+
+
+            nextOptionId++;
+        }
+    }
+
+    function addNewOptions(num, parentOptionId) {
+        if (!num || !parentOptionId) return;
+
+        var parentOption = document.getElementById('option-' + parentOptionId);
+        var parentPos = parentOption.getBoundingClientRect();
+        var verticalSpacing = 100; // Vertical distance between parent and children
+        var horizontalSpacing = 50; // Horizontal space between child nodes
+
+        // Function to get the starting x-position of the first child
+        function getFirstChildPosition(numChildren, parentX) {
+            if (numChildren === 1) return parentX;
+            return parentX - (horizontalSpacing * (numChildren - 1)) / 2;
+        }
+
+        var firstChildX = getFirstChildPosition(num, parentPos.left);
+        var childY = parentPos.bottom + verticalSpacing;
+
+        for (var i = 0; i < num; i++) {
+            var childX = firstChildX + i * horizontalSpacing;
+
+            var newOption = document.createElement('div');
+            newOption.className = 'quiz-option';
+            var nextOptionId = document.querySelectorAll('.quiz-option').length + 1;
+            newOption.id = 'option-' + nextOptionId;
+            newOption.innerHTML = 'Option ' + nextOptionId +
+                '<div class="select-circle" data-option="' + nextOptionId + '"></div>';
+            newOption.style.left = childX + 'px';
+            newOption.style.top = childY + 'px';
+
+            document.getElementById('jsplumb-container').appendChild(newOption);
+
+            jsPlumb.draggable(newOption.id, {
+                drag: function(event) {
+                    jsPlumb.repaint(newOption.id);
+                }
+            });
+
+            jsPlumb.connect({
+                source: parentOption.id,
+                target: newOption.id,
+                anchors: ["AutoDefault", "AutoDefault"],
+                connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true }],
+                paintStyle: { stroke: "#5c96bc", strokeWidth: 2 },
+                endpoint: "Blank",
+                overlays: [
+                    ["Arrow", { width: 12, length: 12, location: 1 }]
+                ]
+            });
+
+
+            nextOptionId++;
+        }
+    }
+
+</script>
+
+</body>
+</html>

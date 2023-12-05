@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
+    <link rel="stylesheet" href="jsplum.css">
+
+</head>
+<body>
+<style>
+    #jsplumb-container {
+        position: relative;
+        min-height:1000px;
+    }
+    .quiz-option {
+        position: absolute;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }
+    .select-circle {
+        width: 15px;
+        height: 15px;
+        background-color: blue;
+        border-radius: 50%;
+        display: inline-block;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    #option-1 {
+        position: absolute;
+        left: 600px; /* Left of screen */
+        top: 50px; /* Positioned 50px from the top of the screen */
+
+        /*top: 50%; !* Middle of screen vertically *!*/
+        /*transform: translateY(-50%); !* Adjust for the height of the element *!*/
+        /* Other styles */
+    }
+    #jsplumb-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        cursor: grab; /* Cursor is a grabbing hand */
+    }
+    #jsplumb-container.grabbing {
+        cursor: grabbing; /* Cursor when actually dragging */
+    }
+    #sidebar {
+        position: fixed; /* Or absolute, depending on your needs */
+        width: 200px; /* Adjust as needed */
+        top: 0;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto; /* For scrollable sidebar content */
+        background-color: #f0f0f0; /* Just for visibility */
+        z-index: 1000; /* Ensures the sidebar is above the canvas */
+    }
+    #jsplumb-container {
+        margin-left: 200px; /* Adjust based on the sidebar width */
+        height: 90% !important;
+        /*min-height: 1000px; !* Minimum height *!*/
+        /* Full height of the viewport */
+        overflow: auto; /* If you want scrolling within the canvas */
+    }
+    /* Additional styles for sidebar, etc. */
+</style>
+<div id="sidebar" style="display:none;">
+    <input type="number" id="number-input" min="1" max="10">
+    <button id="add-options">Add Options</button>
+    <select id="element-type">
+        <option value="text">Text</option>
+        <option value="checkbox">Checkbox</option>
+        <option value="select">Select</option>
+        <option value="radio">Radio</option>
+    </select>
+    <button id="browse-element">Browse</button>
+
+    <!-- Textbox for Title -->
+    <input type="text" id="title" placeholder="Enter title" />
+    <select id="field-selector">
+        <option value="field1">What is your action</option>
+        <option value="field2">What is your condition</option>
+        <!-- Add other fields as needed -->
+    </select>
+    <button id="match-field-btn">Match with Field</button>
+    <div id="selected-field-label">What is your skin type?</div>
+    <!-- Buttons -->
+    <button id="change-title-btn">Change Title</button>
+    <button id="connect-btn">Connect to Destination</button>
+    <button id="add-new-element">Add new element</button>
+    <button id="sumbit">Submit</button>
+</div>
+<div id="jsplumb-container">
+    <div class="quiz-option" id="option-1" data-type="start" data-label="Start">
+        Option 1
+        <div class="select-circle" data-option="1"></div>
+    </div>
+    <!-- Repeat for other options -->
+</div>
+
+
+<script src="jsplum.js"></script>
+<script>
+    var isPanning = false;
+    var startX, startY;
+    var origX, origY;
+
+    var container = document.getElementById('jsplumb-container');
+
+    container.addEventListener('mousedown', function(e) {
+        isPanning = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origX = container.scrollLeft;
+        origY = container.scrollTop;
+        container.classList.add('grabbing');
+    });
+
+    container.addEventListener('mousemove', function(e) {
+        if (!isPanning) return;
+        var newX = e.clientX;
+        var newY = e.clientY;
+        var dx = newX - startX;
+        var dy = newY - startY;
+        container.scrollLeft = origX - dx;
+        container.scrollTop = origY - dy;
+    });
+
+    container.addEventListener('mouseup', function(e) {
+        isPanning = false;
+        container.classList.remove('grabbing');
+    });
+
+    // Optional: cancel panning if the user leaves the container
+    container.addEventListener('mouseleave', function(e) {
+        isPanning = false;
+        container.classList.remove('grabbing');
+    });
+</script>
+
+</body>
+</html>
