@@ -8,7 +8,9 @@ use Illuminate\Http\Request;  // Ensure this is the correct path to the Request 
 class NotificationController extends Controller {
     use DynamicModelTrait;
     public function __construct() {
-        $this->initializeDynamicModelTrait(Notification::class,'/home/thuy/work/temp_remix/mobileappbuilder/vite/ai-mobile-app-builder/web/app/Http/Controllers/notifications.xml');
+        $relativePath = 'app/Http/Controllers/notifications.xml';
+
+        $this->initializeDynamicModelTrait(Notification::class,  base_path($relativePath));
 
         $this->model = Notification::class;
     }

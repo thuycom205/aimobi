@@ -8,7 +8,10 @@ use Illuminate\Http\Request;  // Ensure this is the correct path to the Request 
 class AppSubmissionController extends Controller {
     use DynamicModelTrait;
     public function __construct() {
-        $this->initializeDynamicModelTrait(AppSubmission::class,'/home/thuy/work/temp_remix/mobileappbuilder/vite/ai-mobile-app-builder/web/app/Http/Controllers/app_submission.xml');
+        $relativePath = 'app/Http/Controllers/app_submission.xml';
+
+        $this->initializeDynamicModelTrait(AppSubmission::class,  base_path($relativePath));
+
 
         $this->model = AppSubmission::class;
     }

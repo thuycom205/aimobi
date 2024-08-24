@@ -288,7 +288,7 @@ const ItemSettingsPanel = ({ selectedItem,selectedIndex, closePanel, updateItem 
 };
 
 
-function App() {
+function PageBuilder() {
     const navigate = useNavigate();
     const [showToast, setShowToast] = useState(false);
 
@@ -622,4 +622,4 @@ function App() {
     );
 }
 
-export default App;
+export default PageBuilder;

@@ -1,4 +1,10 @@
 import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
+import HomePage from "./pages/index.jsx";
+import PageBuilder from "./pages/page_builder";
+import PageMenuBuilder from "./pages/page_menu_buider.jsx";
+import PageAppSubmissionInfo from "./pages/page_app_submission_info.jsx";
+import PageNotificationList from "./pages/page_notification_list.jsx";
+
 
 /**
  * File-based routing.
@@ -25,7 +31,12 @@ export default function Routes({ pages }) {
   return (
     <ReactRouterRoutes>
       {routeComponents}
-      <Route path="*" element={<NotFound />} />
+        <Route path="/page_builder/*" element={<PageBuilder />} />
+        <Route path="/page_menu_buider/*" element={<PageMenuBuilder />} />
+        <Route path="/page_app_submission_info/*" element={<PageAppSubmissionInfo />} />
+        <Route path="/page_notification_list/*" element={<PageNotificationList />} />
+
+        <Route path="*" element={<HomePage />} />
     </ReactRouterRoutes>
   );
 }

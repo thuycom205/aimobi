@@ -3,7 +3,7 @@ import React, { useState,useEffect, useCallback } from 'react';
 import { Frame, Page, Layout, Card, FormLayout, TextField, Button,LegacyCard ,Toast} from '@shopify/polaris';
 import {useNavigate} from 'react-router-dom';
 
-const MyComponent = () => {
+const PageAppSubmissionInfo = () => {
     const [id, setId] = useState('');
     const [shop_name, setShop_name] = useState('');
     const [phone, setPhone] = useState('');
@@ -220,4 +220,4 @@ const MyComponent = () => {
     );
 };
 
-export default MyComponent;
+export default PageAppSubmissionInfo;

@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\KolController;
+
 
 use App\Exceptions\ShopifyProductCreatorException;
 use App\Lib\AuthRedirection;
@@ -43,21 +45,30 @@ Route::fallback(function (Request $request) {
         } else {
             return file_get_contents(base_path('frontend/index.html'));
         }
+        Log::debug("embedded shop $shop");
+
     } else {
+        Log::debug("not embedded  in fallback shop $shop");
+
         return redirect(Utils::getEmbeddedAppUrl($request->query("host", null)) . "/" . $request->path());
     }
 })->middleware('shopify.installed');
 
 Route::get('/api/auth', function (Request $request) {
+    Log::debug("api/auth ");
+
     $shop = Utils::sanitizeShopDomain($request->query('shop'));
 
     // Delete any previously created OAuth sessions that were not completed (don't have an access token)
     Session::where('shop', $shop)->where('access_token', null)->delete();
+    Log::debug("api/auth $shop");
 
     return AuthRedirection::redirect($request);
 });
 
 Route::get('/api/auth/callback', function (Request $request) {
+    Log::debug("api/auth/callback $shop");
+
     $session = OAuth::callback(
         $request->cookie(),
         $request->query(),
@@ -164,3 +175,8 @@ Route::get('/api/mobile_submission/fetch', [AppSubmissionController::class, 'fet
 Route::post('/api/mobile_submission/fetchList', [AppSubmissionController::class, 'fetchList']);
 
 
+
+Route::post('/api/kol/save', [KolController::class, 'save']);
+Route::get('/api/kol/fetch', [KolController::class, 'fetch']);
+Route::post('/api/kol/fetchList', [KolController::class, 'fetchList']);
+Route::post('/api/kol/delete', [KolController::class, 'delete']);

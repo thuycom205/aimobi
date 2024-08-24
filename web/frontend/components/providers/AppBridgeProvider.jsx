@@ -41,7 +41,7 @@ export function AppBridgeProvider({ children }) {
 
     window.__SHOPIFY_DEV_HOST = host;
     window.shop_name= new URLSearchParams(location.search).get("shop") || '';
-    window.dev_server = "https://lara.com";
+    window.dev_server = "https://xapp2.thexseed.com";
 
     return {
       host,

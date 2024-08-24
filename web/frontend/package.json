@@ -25,6 +25,7 @@
     "@mui/material": "^5.14.18",
     "@shopify/app-bridge": "^3.7.7",
     "@shopify/app-bridge-react": "^3.7.7",
+    "@shopify/app-bridge-utils": "^3.5.1",
     "@shopify/i18next-shopify": "^0.2.9",
     "@shopify/polaris": "^10.49.1",
     "@testing-library/jest-dom": "^6.1.4",

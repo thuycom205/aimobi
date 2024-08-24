@@ -126,7 +126,7 @@ const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
                             <TableRow key={info.id}>
                                 <TableCell>{info.title}</TableCell>
                                 <TableCell>
-                                    <a href={'https://' + window.shop_name+ `/collections/${info.handle}`} target="_blank" rel="noopener noreferrer">View</a>
+                                    <a href={`https://${shop}/collections/${info.handle}`} target="_blank" rel="noopener noreferrer">View</a>
                                 </TableCell>
                                 <TableCell>
                                     <Button onClick={() => handleDeleteCollection(info.id)}>Delete</Button>
@@ -212,7 +212,7 @@ const MenuSettingsPanel = ({ selectedItem, onSave, onClose }) => {
     );
 };
 
-function App() {
+function PageMenuBuilder() {
     const [showToast, setShowToast] = useState(false);
 
     const [menuId, setMenuId] = useState(0);
@@ -223,6 +223,33 @@ function App() {
     const [selectedItem, setSelectedItem] = useState(null);
     const [settingsPanelOpen, setSettingsPanelOpen] = useState(false);
     const [isScreenDrawerOpen, setScreenDrawerOpen] = useState(false);
+
+    const [shop, setShop] = useState('');
+    const [host, setHost] = useState('');
+
+    useEffect(() => {
+        const base64Decode = (encodedString) => {
+            try {
+                return atob(encodedString);
+            } catch (e) {
+                console.error("Failed to decode base64 string:", e);
+                return null;
+            }
+        };
+
+        const url = window.location.href;
+        const match = url.match(/hostz\/([^\/]+)/);
+        if (match) {
+            const encodedString = match[1];
+            const decodedHost = base64Decode(encodedString);
+            const parts = decodedHost.split('/');
+            const storeName = parts[parts.length - 1];
+            setShop(storeName + '.myshopify.com');
+            setHost(decodedHost);
+        }
+    }, []);
+
+
     // Function to toggle the Screen's drawer
     const toggleScreenDrawer = (open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -269,14 +296,15 @@ function App() {
 
         const payload = {
             id: menuId,
-            shop_name: window.shop_name, // Replace with actual shop name
+            shop_name: shop, // Use shop state instead of window.shop_name
+
             title: menuTitle,
             menu_type: menuType,
             menu_items: menuItemsJson
         };
 
         try {
-            const url = window.dev_server + '/api/mobile_menu/save';
+            const url = '/api/mobile_menu/save';
             const response = await fetch(url, {
                 method: 'POST', // Use 'PUT' if updating an existing menu
                 headers: {
@@ -303,9 +331,9 @@ function App() {
     useEffect(() => {
         const fetchMenuData = async (id) => {
             try {
-                let url = window.dev_server + `/api/mobile_menu/fetch?shop=` + window.shop_name;
-                if (id >  0) {
-                    url = window.dev_server + `/api/mobile_menu/fetch?id=${id}&shop=` + window.shop_name;
+                let url = `/api/mobile_menu/fetch?shop=${shop}`;
+                if (id > 0) {
+                    url = `/api/mobile_menu/fetch?id=${id}&shop=${shop}`;
                 }
                 const response = await fetch(url, {
                     method: 'GET',
@@ -403,4 +431,4 @@ function App() {
     );
 }
 
-export default App;
+export default PageMenuBuilder;

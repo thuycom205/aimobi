@@ -21,6 +21,7 @@ class AuthRedirection
         } else {
             $redirectUrl = self::serverSideRedirectUrl($shop, $isOnline);
         }
+        $redirectUrl = self::serverSideRedirectUrl($shop, $isOnline);
 
         return redirect($redirectUrl);
     }

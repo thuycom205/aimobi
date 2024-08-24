@@ -3,7 +3,7 @@ import {Frame,Page } from '@shopify/polaris';
 import ListPage from '../components/ListPage/ListPage';
 import {useNavigate} from 'react-router-dom';
 
-const SeatLayoutsPage = () => {
+const PageNotificationList = () => {
     const navigate = useNavigate();
 
     return (
@@ -32,4 +32,4 @@ const SeatLayoutsPage = () => {
     );
 };
 
-export default SeatLayoutsPage;
+export default PageNotificationList;
